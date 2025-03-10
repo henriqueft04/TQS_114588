@@ -5,8 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.logging.Logger;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.junit.platform.commons.logging.LoggerFactory.getLogger;
@@ -19,27 +18,13 @@ public class HelloWorldChromeJupiterTest {
 
     @BeforeAll
     static void setupClass() {
-        WebDriverManager.chromedriver().setup();
+        WebDriverManager.firefoxdriver().setup();
     }
 
     @BeforeEach
     void setup() {
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("/usr/bin/chromium-browser"); // Ensure this is the correct Chromium path
-
-        // Add necessary arguments to avoid "unable to connect to renderer" error
-        options.addArguments("--headless");
-        // options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--remote-debugging-port=9223");
-        options.addArguments("--disable-gpu"); // Disable GPU acceleration
-        options.addArguments("--disable-software-rasterizer");
-        options.addArguments("--window-size=1920,1080"); // Ensure a virtual screen size
-        options.addArguments("--disable-features=VizDisplayCompositor"); // Prevents crashes
-
-        driver = new ChromeDriver(options);
+        driver = new FirefoxDriver();
     }
-
 
     @Test
     void test() {
