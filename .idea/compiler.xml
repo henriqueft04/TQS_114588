@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="lab1_1" />
+        <module name="euromillions-play" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="lab1_1_stack" target="17" />
+      <module name="lab2_1_StocksPortfolio" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

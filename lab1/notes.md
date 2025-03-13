@@ -1,4 +1,4 @@
-# Lab 1.1 Notes
+# Lab 1 Notes
 
 ## 1.1
 ### j) Considering the previous point, can you think of a scenario where the TqsStack will fail despite the high coverage level? To which extent can one rely on code coverage to assess quality of your code?
