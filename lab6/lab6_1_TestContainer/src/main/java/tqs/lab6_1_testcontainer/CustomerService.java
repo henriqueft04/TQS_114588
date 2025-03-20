@@ -21,8 +21,8 @@ public class CustomerService {
             PreparedStatement pstmt = conn.prepareStatement(
                     "insert into customers(id,name) values(?,?)"
             );
-            pstmt.setLong(1, customer.id());
-            pstmt.setString(2, customer.name());
+            pstmt.setLong(1, customer.getId());
+            pstmt.setString(2, customer.getName());
             pstmt.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
