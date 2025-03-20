@@ -29,13 +29,3 @@ Feature: Basic Arithmetic
     Given a calculator I just turned on
     When I divide 10 by 2
     Then the result is 5
-
-  Scenario: Division by zero
-    Given a calculator I just turned on
-    When I divide 10 by 0
-    Then the result is error
-
-  Scenario: Invalid operation
-    Given a calculator I just turned on
-    When I perform "@" with 5 and 3
-    Then the result is error

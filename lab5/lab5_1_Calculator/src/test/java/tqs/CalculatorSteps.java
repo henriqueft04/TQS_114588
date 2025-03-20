@@ -16,6 +16,7 @@ public class CalculatorSteps {
     static final Logger log = getLogger(lookup().lookupClass());
 
     private Calculator calc;
+    private Exception exception;
 
     @Given("a calculator I just turned on")
     public void setup() {
@@ -44,6 +45,28 @@ public class CalculatorSteps {
         log.debug("Result: {} (expected {})", value, expected);
         assertEquals(expected, value);
     }
-    
 
+    @When("I multiply {int} and {int}")
+    public void multiply(int arg1, int arg2) {
+        log.debug("Multiplying {} and {}", arg1, arg2);
+        calc.push(arg1);
+        calc.push(arg2);
+        calc.push("*");
+    }
+
+    @When("I divide {int} by {int}")
+    public void divide(int arg1, int arg2) {
+        log.debug("Dividing {} by {}", arg1, arg2);
+        calc.push(arg1);
+        calc.push(arg2);
+        calc.push("/");
+    }
+
+    @When("I perform {string} with {int} and {int}")
+    public void performInvalidOperation(String operation, int arg1, int arg2) {
+        log.debug("Performing {} operation with {} and {}", operation, arg1, arg2);
+        calc.push(arg1);
+        calc.push(arg2);
+        calc.push(operation);
+    }
 }

@@ -11,7 +11,9 @@ public class Calculator {
     private static final List<String> OPS = asList("-", "+", "*", "/");
 
     public void push(Object arg) {
-        if (OPS.contains(arg)) {
+        if (arg instanceof Number) {
+            stack.add((Number) arg);
+        } else if (OPS.contains(arg)) {
             Number y = stack.removeLast();
             Number x = stack.isEmpty() ? 0 : stack.removeLast();
             Double val = null;
@@ -22,11 +24,14 @@ public class Calculator {
             } else if (arg.equals("*")) {
                 val = x.doubleValue() * y.doubleValue();
             } else if (arg.equals("/")) {
+                if (y.doubleValue() == 0) {
+                    throw new ArithmeticException("Cannot divide by zero");
+                }
                 val = x.doubleValue() / y.doubleValue();
             }
             push(val);
         } else {
-            stack.add((Number) arg);
+            throw new IllegalArgumentException("Invalid operation: " + arg);
         }
     }
 
