@@ -19,7 +19,7 @@ public class CustomerService {
     public void createCustomer(Customer customer) {
         try (Connection conn = this.connectionProvider.getConnection()) {
             PreparedStatement pstmt = conn.prepareStatement(
-                    "insert into customers(id,name) values(?,?)"
+                    "insert into customers(name) values(?,?)"
             );
             pstmt.setLong(1, customer.getId());
             pstmt.setString(2, customer.getName());
@@ -40,7 +40,7 @@ public class CustomerService {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String name = rs.getString("name");
-                customers.add(new Customer(id, name));
+                customers.add(new Customer(name));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

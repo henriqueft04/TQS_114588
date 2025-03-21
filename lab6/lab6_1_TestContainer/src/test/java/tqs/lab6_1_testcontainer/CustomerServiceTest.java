@@ -6,10 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import tqs.lab6_1_testcontainer.Customer;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @SpringBootTest
@@ -35,10 +39,16 @@ public class CustomerServiceTest {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     @Test
     @Order(1)
     void shouldInsertCustomer() {
-        // Implement test logic
+        Customer customer = new Customer("John");
+        customerRepository.save(customer);
+
+        assertThat(customer.getId()).isNotNull();
     }
 
     @Test

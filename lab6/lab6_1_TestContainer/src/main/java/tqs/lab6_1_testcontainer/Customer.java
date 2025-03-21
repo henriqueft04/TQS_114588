@@ -19,8 +19,7 @@ public class Customer {
 
     // Constructors, Getters, and Setters
 
-    public Customer(long id, String name) {
-        this.id = id;
+    public Customer(String name) {
         this.name = name;
     }
 
