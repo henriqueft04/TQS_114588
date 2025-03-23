@@ -13,7 +13,6 @@ public class CustomerService {
 
     public CustomerService(DBConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
-        createCustomersTableIfNotExists();
     }
 
     public void createCustomer(Customer customer) {
