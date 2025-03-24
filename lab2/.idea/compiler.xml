@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="lab2_1_StocksPortfolio" />
         <module name="lab2_2_Conversion" />
+        <module name="lab2_3_RemoteIntegration" />
       </profile>
     </annotationProcessing>
   </component>
