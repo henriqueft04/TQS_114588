@@ -1,6 +1,6 @@
 // Test class with Mockito
 import org.junit.jupiter.api.Test;
-import tqs.IAsyncHttpClient;
+import tqs.ISimpleHttpClient;
 import tqs.Product;
 import tqs.ProductFinderService;
 
@@ -13,7 +13,7 @@ class ProductFinderServiceTest {
 
     @Test
     void testFindProductDetails() {
-        IAsyncHttpClient mockHttpClient = mock(IAsyncHttpClient.class);
+        ISimpleHttpClient mockHttpClient = mock(ISimpleHttpClient.class);
 
         String mockResponse = "{\"id\": 3, \"image\": \"some_image_url\", \"description\": \"A cotton jacket\", \"price\": 29.99, \"title\": \"Mens Cotton Jacket\", \"category\": \"clothing\"}";
         when(mockHttpClient.doHttpGet(anyString())).thenReturn(mockResponse);
@@ -29,7 +29,7 @@ class ProductFinderServiceTest {
 
     @Test
     void testFindProductDetailsNoProduct() {
-        IAsyncHttpClient mockHttpClient = mock(IAsyncHttpClient.class);
+        ISimpleHttpClient mockHttpClient = mock(ISimpleHttpClient.class);
 
         when(mockHttpClient.doHttpGet(anyString())).thenReturn("[]"); // Empty response for no product
 

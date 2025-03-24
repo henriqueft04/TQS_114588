@@ -1,41 +1,28 @@
 package tqs;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import java.io.IOException;
 
-public class SimpleHttpClient implements IAsyncHttpClient {
-
+public class SimpleHttpClient implements ISimpleHttpClient {
     @Override
-    public String doHttpGet(String url) {
-        StringBuilder response = new StringBuilder();
-        try {
-            // Create a URL object from the given URL string
-            URL urlObj = new URL(url);
-            // Open a connection to the URL
-            HttpURLConnection connection = (HttpURLConnection) urlObj.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);  // Set connection timeout
-            connection.setReadTimeout(5000);     // Set read timeout
+    public String doHttpGet(String url) throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            HttpGet request = new HttpGet(url);
+            CloseableHttpResponse response = client.execute(request);
 
-            // Check if the request was successful
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {  // Success
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+            try {
+                HttpEntity entity = response.getEntity();
+                return EntityUtils.toString(entity);
+            } finally {
+                if (response != null) {
+                    response.close();
                 }
-                in.close();
-            } else {
-                throw new RuntimeException("HTTP GET request failed with code: " + responseCode);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";  // Return empty string in case of error
         }
-
-        return response.toString();
     }
 }

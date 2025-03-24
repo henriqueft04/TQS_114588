@@ -6,10 +6,10 @@ import java.util.Optional;
 
 
 public class ProductFinderService {
-    private final IAsyncHttpClient httpClient;
+    private final ISimpleHttpClient httpClient;
     private static final String API_PRODUCTS = "https://fakestoreapi.com/products";
 
-    public ProductFinderService(IAsyncHttpClient httpClient) {
+    public ProductFinderService(ISimpleHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

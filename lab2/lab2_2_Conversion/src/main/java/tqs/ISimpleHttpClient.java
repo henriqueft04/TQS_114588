@@ -1,5 +1,5 @@
 package tqs;
 
-public interface IAsyncHttpClient {
+public interface ISimpleHttpClient {
     String doHttpGet(String url);
 }

@@ -2,18 +2,19 @@ package tqs;
 
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.Optional;
 
 
 public class ProductFinderService {
-    private final IAsyncHttpClient httpClient;
+    private final ISimpleHttpClient httpClient;
     private static final String API_PRODUCTS = "https://fakestoreapi.com/products";
 
-    public ProductFinderService(IAsyncHttpClient httpClient) {
+    public ProductFinderService(ISimpleHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public Optional<Product> findProductDetails(Integer id) {
+    public Optional<Product> findProductDetails(Integer id) throws IOException {
 
         String response = httpClient.doHttpGet(API_PRODUCTS + "/" + id);
 
