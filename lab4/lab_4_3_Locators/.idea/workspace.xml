@@ -5,23 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3457c5b6-0fb7-4924-b293-878469baa151" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/src/test/java/Youreawizzardharryimplicitwait_dockerTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../notes.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../lab1/notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../lab1/notes.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../lab2/notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../lab2/notes.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tqs/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/src/main/java/tqs/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/YoureawizzardharryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/src/test/java/YoureawizzardharryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/Youreawizzardharry_ImplicitWaitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab_4_3&amp;5_Locators&amp;Docker/src/test/java/YoureawizzardharryimplicitwaitTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,24 +42,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;JUnit.YoureAWizardHarryTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.YoureawizzardharryTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.YoureawizzardharryimplicitwaitTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.Youreawizzardharryimplicitwait_dockerTest.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.YoureAWizardHarryTest.executor": "Run",
+    "JUnit.YoureawizzardharryTest.executor": "Run",
+    "JUnit.YoureawizzardharryimplicitwaitTest.executor": "Run",
+    "JUnit.Youreawizzardharryimplicitwait_dockerTest.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/ric/Desktop/TQS_114588/lab5",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
@@ -97,7 +82,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1741883268649</updated>
-      <workItem from="1741883269882" duration="4779000" />
+      <workItem from="1741883269882" duration="5403000" />
+      <workItem from="1742468037281" duration="91000" />
+      <workItem from="1742483557553" duration="19000" />
     </task>
     <servers />
   </component>
