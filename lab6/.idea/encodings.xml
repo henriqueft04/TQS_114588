@@ -3,5 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/lab6_1_TestContainer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lab6_2_DatabaseMigration/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lab6_3_RestAssured/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lab6_3_RestAssured/src/main/resources" charset="UTF-8" />
   </component>
 </project>
