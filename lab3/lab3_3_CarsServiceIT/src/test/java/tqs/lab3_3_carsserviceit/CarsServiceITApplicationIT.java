@@ -9,25 +9,15 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import tqs.lab3_3_carsserviceit.data.CarRepository;
 import tqs.lab3_3_carsserviceit.model.Car;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
-@TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create")
-class Lab33CarsServiceITApplicationTests {
+@TestPropertySource(locations = "classpath:application-integrationtest.properties") // Use MySQL
+class CarsServiceITApplicationIT {
 
     @Autowired
     private CarRepository carRepository;
-
-    @Container
-    private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.4")
-            .withUsername("demo")
-            .withPassword("passefixe")
-            .withDatabaseName("tqsdemo");
 
     @LocalServerPort
     int port;
@@ -35,9 +25,9 @@ class Lab33CarsServiceITApplicationTests {
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+        registry.add("spring.datasource.url", () -> "jdbc:mysql://localhost:3306/tqsdemo");
+        registry.add("spring.datasource.username", () -> "root");
+        registry.add("spring.datasource.password", () -> "password");
     }
 
     @BeforeEach
@@ -54,10 +44,11 @@ class Lab33CarsServiceITApplicationTests {
                 .scheme("http")
                 .host("localhost")
                 .port(port)
-                .path("api")
-                .path("/cars")
-                .path(String.valueOf(car1.getCarId()))
+                .path("/api/cars")
                 .build()
                 .toUriString();
+
+        // Now, you can make a GET request and assert the response here.
+        // (You can use TestRestTemplate to perform a GET request if desired)
     }
 }
