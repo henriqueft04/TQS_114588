@@ -5,7 +5,13 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/lab3_1_EmployeeManagement/pom.xml" />
+        <option value="$PROJECT_DIR$/ua_tqs_gs20/gs-employee-mngr/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/lab3_1_EmployeeManagement/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_23" default="true" project-jdk-name="openjdk-23" project-jdk-type="JavaSDK">
