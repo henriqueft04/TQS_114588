@@ -7,10 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lab3_2_CarsService" />
+        <module name="employee-mngr" />
+        <module name="lab3_3CarsServiceIT" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="employee-mngr" target="21" />
       <module name="lab3_1_EmployeeManagement" target="21" />
     </bytecodeTargetLevel>
   </component>
@@ -19,6 +20,7 @@
       <module name="employee-mngr" options="-parameters" />
       <module name="lab3_1_EmployeeManagement" options="-parameters" />
       <module name="lab3_2_CarsService" options="-parameters" />
+      <module name="lab3_3CarsServiceIT" options="-parameters" />
     </option>
   </component>
 </project>
