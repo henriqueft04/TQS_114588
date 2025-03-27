@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d5949ed2-fa4f-4d9a-abcd-0740e64a44b0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/lab7_1_k6Tool/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_1_k6Tool/readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/config/grafana/dashboards/dashboards.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/config/grafana/dashboards/definitions/19665_rev2.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/config/grafana/datasources/datasource.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/config/prometheus.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/media/k6-prometheus-dashboard.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/media/menu-icon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/media/quickpizza-websocket-ui.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/media/vus.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/media/web-dashboard-overview.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/test_stages2.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lab3/lab3_3_CarsServiceIT/src/test/java/tqs/lab3_3_carsserviceit/CarsServiceITApplicationIT.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab3/lab3_3_CarsServiceIT/src/test/java/tqs/lab3_3_carsserviceit/CarsServiceITApplicationIT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab7_1_k6Tool/k6-oss-workshop/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/lab7_1_k6Tool/k6-oss-workshop/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab7_1_k6Tool/k6-oss-workshop/test.js" beforeDir="false" afterPath="$PROJECT_DIR$/lab7_1_k6Tool/k6-oss-workshop/test.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "henriqueft04"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:henriqueft04/TQS_114588.git",
+    "accountId": "80a409b1-efec-408f-8cd3-fd27def5eab7"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2uuM6m7hOdIjMwcH8iLY7qC6W3j" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/ric/Desktop/TQS_114588/lab7/lab7_2_ResultsMonitoring/k6-oss-workshop",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop" />
+      <recent name="$PROJECT_DIR$/lab7_2_ResultsMonitoring" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lab7_1_k6Tool" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.24978.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-IU-243.24978.46" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d5949ed2-fa4f-4d9a-abcd-0740e64a44b0" name="Changes" comment="" />
+      <created>1743093832477</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743093832477</updated>
+      <workItem from="1743093833594" duration="5418000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
