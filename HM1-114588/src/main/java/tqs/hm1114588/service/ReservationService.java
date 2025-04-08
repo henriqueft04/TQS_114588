@@ -1,0 +1,200 @@
+package tqs.hm1114588.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import tqs.hm1114588.model.Reservation;
+import tqs.hm1114588.model.ReservationStatus;
+import tqs.hm1114588.model.Restaurant;
+import tqs.hm1114588.repository.ReservationRepository;
+
+@Service
+public class ReservationService {
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+    @Autowired
+    private RestaurantService restaurantService;
+
+    /**
+     * Find all reservations
+     * @return List of all reservations
+     */
+    @Cacheable(value = "reservations")
+    public List<Reservation> findAll() {
+        return reservationRepository.findAll();
+    }
+
+    /**
+     * Find reservation by ID
+     * @param id Reservation ID
+     * @return Reservation if found
+     */
+    @Cacheable(value = "reservation", key = "#id")
+    public Optional<Reservation> findById(Long id) {
+        return reservationRepository.findById(id);
+    }
+
+    /**
+     * Find reservation by token
+     * @param token Reservation token
+     * @return Reservation if found
+     */
+    @Cacheable(value = "reservationByToken", key = "#token")
+    public Optional<Reservation> findByToken(String token) {
+        return reservationRepository.findByToken(token);
+    }
+
+    /**
+     * Find reservations by restaurant ID
+     * @param restaurantId Restaurant ID
+     * @return List of reservations
+     */
+    @Cacheable(value = "reservationsByRestaurant", key = "#restaurantId")
+    public List<Reservation> findByRestaurantId(Long restaurantId) {
+        return reservationRepository.findByRestaurantId(restaurantId);
+    }
+
+    /**
+     * Find reservations by date range
+     * @param startDate Start date
+     * @param endDate End date
+     * @return List of reservations
+     */
+    @Cacheable(value = "reservationsByDateRange", key = "#startDate + '_' + #endDate")
+    public List<Reservation> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return reservationRepository.findByReservationTimeBetween(startDate, endDate);
+    }
+
+    /**
+     * Save reservation
+     * @param reservation Reservation to save
+     * @return Saved reservation
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#result.id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    public Reservation save(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
+
+    /**
+     * Create a new reservation
+     * @param restaurantId Restaurant ID
+     * @param customerName Customer name
+     * @param customerEmail Customer email
+     * @param customerPhone Customer phone
+     * @param partySize Party size
+     * @param reservationTime Reservation time
+     * @param mealType Meal type
+     * @param specialRequests Special requests
+     * @param isGroupReservation Is group reservation
+     * @param menusRequired Menus required
+     * @return Created reservation
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#result.id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    public Reservation createReservation(
+            Long restaurantId,
+            String customerName,
+            String customerEmail,
+            String customerPhone,
+            Integer partySize,
+            LocalDateTime reservationTime,
+            String mealType,
+            String specialRequests,
+            Boolean isGroupReservation,
+            Integer menusRequired) {
+        
+        Restaurant restaurant = restaurantService.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        
+        Reservation reservation = new Reservation();
+        reservation.setRestaurant(restaurant);
+        reservation.setCustomerName(customerName);
+        reservation.setCustomerEmail(customerEmail);
+        reservation.setCustomerPhone(customerPhone);
+        reservation.setPartySize(partySize);
+        reservation.setReservationTime(reservationTime);
+        reservation.setMealType(mealType);
+        reservation.setSpecialRequests(specialRequests);
+        reservation.setIsGroupReservation(isGroupReservation);
+        reservation.setMenusRequired(menusRequired);
+        reservation.setToken(UUID.randomUUID().toString());
+        reservation.setStatus(ReservationStatus.PENDING);
+        
+        return reservationRepository.save(reservation);
+    }
+
+    /**
+     * Cancel a reservation
+     * @param id Reservation ID
+     * @return Updated reservation if found
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    public Optional<Reservation> cancelReservation(Long id) {
+        return reservationRepository.findById(id)
+                .map(reservation -> {
+                    reservation.setStatus(ReservationStatus.CANCELLED);
+                    return reservationRepository.save(reservation);
+                });
+    }
+
+    /**
+     * Confirm a reservation
+     * @param id Reservation ID
+     * @return Updated reservation if found
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    public Optional<Reservation> confirmReservation(Long id) {
+        return reservationRepository.findById(id)
+                .map(reservation -> {
+                    reservation.setStatus(ReservationStatus.CONFIRMED);
+                    return reservationRepository.save(reservation);
+                });
+    }
+
+    /**
+     * Check-in a reservation
+     * @param token Reservation token
+     * @return Updated reservation if found
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#result.id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
+    public Optional<Reservation> checkInReservation(String token) {
+        return reservationRepository.findByToken(token)
+                .map(reservation -> {
+                    if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+                        reservation.setStatus(ReservationStatus.CHECKED_IN);
+                        return reservationRepository.save(reservation);
+                    }
+                    return reservation;
+                });
+    }
+
+    /**
+     * Delete reservation by ID
+     * @param id Reservation ID
+     */
+    @Transactional
+    @CacheEvict(value = {"reservation", "reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
+    public void deleteById(Long id) {
+        reservationRepository.deleteById(id);
+    }
+} 

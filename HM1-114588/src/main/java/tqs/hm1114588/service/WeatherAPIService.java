@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class WeatherAPIService {
     private final WeatherDataRepository weatherDataRepository;
     private final ObjectMapper objectMapper;
     private final WeatherDataService weatherDataService;
+    
+    // Cache statistics
+    private final AtomicLong totalRequests = new AtomicLong(0);
+    private final AtomicLong cacheHits = new AtomicLong(0);
+    private final AtomicLong cacheMisses = new AtomicLong(0);
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -50,6 +56,17 @@ public class WeatherAPIService {
      * @return Weather data if found
      */
     public Optional<WeatherData> getForecast(Location location, LocalDate date) {
+        totalRequests.incrementAndGet();
+        
+        // Check if we have cached data
+        Optional<WeatherData> cachedData = weatherDataService.findByLocationAndDate(location, date);
+        if (cachedData.isPresent()) {
+            cacheHits.incrementAndGet();
+            return cachedData;
+        }
+        
+        cacheMisses.incrementAndGet();
+        
         try {
             JsonNode response = restTemplate.getForObject(apiUrl, JsonNode.class);
             
@@ -114,5 +131,38 @@ public class WeatherAPIService {
             null, windDirectionId, precipitation, pressure, 
             radiation, stationId, timestamp, date
         );
+    }
+    
+    /**
+     * Get total number of requests
+     * @return Total number of requests
+     */
+    public long getTotalRequests() {
+        return totalRequests.get();
+    }
+    
+    /**
+     * Get number of cache hits
+     * @return Number of cache hits
+     */
+    public long getCacheHits() {
+        return cacheHits.get();
+    }
+    
+    /**
+     * Get number of cache misses
+     * @return Number of cache misses
+     */
+    public long getCacheMisses() {
+        return cacheMisses.get();
+    }
+    
+    /**
+     * Reset cache statistics
+     */
+    public void resetCacheStatistics() {
+        totalRequests.set(0);
+        cacheHits.set(0);
+        cacheMisses.set(0);
     }
 } 

@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ public class WeatherDataService {
      * Find all weather data
      * @return List of all weather data
      */
+    @Cacheable(value = "weatherDataList")
     public List<WeatherData> findAll() {
         return weatherDataRepository.findAll();
     }
@@ -35,6 +40,7 @@ public class WeatherDataService {
      * @param id Weather data ID
      * @return Weather data if found
      */
+    @Cacheable(value = "weatherData", key = "#id")
     public Optional<WeatherData> findById(Long id) {
         return weatherDataRepository.findById(id);
     }
@@ -44,6 +50,7 @@ public class WeatherDataService {
      * @param location Location
      * @return List of weather data for the location
      */
+    @Cacheable(value = "weatherDataByLocation", key = "#location.id")
     public List<WeatherData> findByLocation(Location location) {
         return weatherDataRepository.findByLocation(location);
     }
@@ -54,6 +61,7 @@ public class WeatherDataService {
      * @param date Forecast date
      * @return Weather data if found
      */
+    @Cacheable(value = "weatherDataByLocationAndDate", key = "#location.id + '_' + #date")
     public Optional<WeatherData> findByLocationAndDate(Location location, LocalDate date) {
         return weatherDataRepository.findByLocationAndForecastDate(location, date);
     }
@@ -64,6 +72,7 @@ public class WeatherDataService {
      * @param startDate Start date
      * @return List of weather data in the date range
      */
+    @Cacheable(value = "weatherDataByLocationAndDateRange", key = "#location.id + '_' + #startDate")
     public List<WeatherData> findByLocationAndDateRange(Location location, LocalDate startDate) {
         return weatherDataRepository.findByLocationAndForecastDateGreaterThanEqual(location, startDate);
     }
@@ -74,6 +83,8 @@ public class WeatherDataService {
      * @return Saved weather data
      */
     @Transactional
+    @CachePut(value = "weatherData", key = "#result.id")
+    @CacheEvict(value = {"weatherDataList", "weatherDataByLocation", "weatherDataByLocationAndDate", "weatherDataByLocationAndDateRange", "weatherDataByDate"}, allEntries = true)
     public WeatherData save(WeatherData weatherData) {
         if (weatherData.getTimestamp() == null) {
             weatherData.setTimestamp(LocalDateTime.now());
@@ -99,6 +110,8 @@ public class WeatherDataService {
      * @return Created weather data
      */
     @Transactional
+    @CachePut(value = "weatherData", key = "#result.id")
+    @CacheEvict(value = {"weatherDataList", "weatherDataByLocation", "weatherDataByLocationAndDate", "weatherDataByLocationAndDateRange", "weatherDataByDate"}, allEntries = true)
     public WeatherData create(Location location, Double temperature, Double humidity, 
                             Double windSpeed, Double windSpeedKm, String windDirection, 
                             Integer windDirectionId, Double precipitation, Double pressure, 
@@ -124,6 +137,12 @@ public class WeatherDataService {
      * @return Updated weather data
      */
     @Transactional
+    @Caching(
+        put = { @CachePut(value = "weatherData", key = "#id") },
+        evict = {
+            @CacheEvict(value = {"weatherDataList", "weatherDataByLocation", "weatherDataByLocationAndDate", "weatherDataByLocationAndDateRange", "weatherDataByDate"}, allEntries = true)
+        }
+    )
     public Optional<WeatherData> update(Long id, Double temperature, Double humidity, 
                                       Double windSpeedKm, Integer windDirectionId, Double precipitation) {
         return weatherDataRepository.findById(id)
@@ -143,6 +162,10 @@ public class WeatherDataService {
      * @param id Weather data ID
      */
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = "weatherData", key = "#id"),
+        @CacheEvict(value = {"weatherDataList", "weatherDataByLocation", "weatherDataByLocationAndDate", "weatherDataByLocationAndDateRange", "weatherDataByDate"}, allEntries = true)
+    })
     public void deleteById(Long id) {
         weatherDataRepository.deleteById(id);
     }
@@ -153,10 +176,12 @@ public class WeatherDataService {
      * @param date Forecast date
      */
     @Transactional
+    @CacheEvict(value = {"weatherDataList", "weatherDataByLocation", "weatherDataByLocationAndDate", "weatherDataByLocationAndDateRange", "weatherDataByDate"}, allEntries = true)
     public void deleteByLocationAndDate(Location location, LocalDate date) {
         weatherDataRepository.deleteByLocationAndForecastDate(location, date);
     }
 
+    @Cacheable(value = "weatherDataByDate", key = "#date")
     public List<WeatherData> findByDate(LocalDate date) {
         return weatherDataRepository.findByForecastDate(date);
     }
