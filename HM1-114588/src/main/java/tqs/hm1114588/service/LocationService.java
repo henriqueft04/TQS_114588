@@ -1,11 +1,11 @@
 package tqs.hm1114588.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tqs.hm1114588.model.Location;
 import tqs.hm1114588.repository.LocationRepository;
@@ -43,16 +43,6 @@ public class LocationService {
     }
 
     /**
-     * Find location by name and country
-     * @param name Location name
-     * @param country Country name
-     * @return Location if found
-     */
-    public Optional<Location> findByNameAndCountry(String name, String country) {
-        return locationRepository.findByNameAndCountry(name, country);
-    }
-
-    /**
      * Find location by latitude and longitude
      * @param latitude Latitude
      * @param longitude Longitude
@@ -63,27 +53,28 @@ public class LocationService {
     }
 
     /**
-     * Create or update a location
-     * @param location Location to save
-     * @return Saved location
-     */
-    public Location save(Location location) {
-        if (location.getCreatedAt() == null) {
-            location.setCreatedAt(LocalDateTime.now());
-        }
-        return locationRepository.save(location);
-    }
-
-    /**
      * Create a new location 
      * @param name Location name
      * @param latitude Latitude
      * @param longitude Longitude
-     * @param country Country name
      * @return Created location
      */
-    public Location create(String name, Double latitude, Double longitude, String country) {
-        Location location = new Location(name, latitude, longitude, country);
+    @Transactional
+    public Location create(String name, Double latitude, Double longitude) {
+        Location location = new Location();
+        location.setName(name);
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        return locationRepository.save(location);
+    }
+
+    /**
+     * Create or update a location
+     * @param location Location to save
+     * @return Saved location
+     */
+    @Transactional
+    public Location save(Location location) {
         return locationRepository.save(location);
     }
 
@@ -91,6 +82,7 @@ public class LocationService {
      * Delete a location by ID
      * @param id Location ID
      */
+    @Transactional
     public void deleteById(Long id) {
         locationRepository.deleteById(id);
     }
@@ -100,11 +92,10 @@ public class LocationService {
      * @param name Location name
      * @param latitude Latitude
      * @param longitude Longitude
-     * @param country Country name
      * @return Existing or created location
      */
-    public Location findOrCreate(String name, Double latitude, Double longitude, String country) {
-        return locationRepository.findByNameAndCountry(name, country)
-            .orElseGet(() -> create(name, latitude, longitude, country));
+    public Location findOrCreate(String name, Double latitude, Double longitude) {
+        return locationRepository.findByName(name)
+            .orElseGet(() -> create(name, latitude, longitude));
     }
 } 

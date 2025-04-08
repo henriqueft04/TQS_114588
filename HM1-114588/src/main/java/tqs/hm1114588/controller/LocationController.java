@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tqs.hm1114588.model.Location;
@@ -58,21 +57,6 @@ public class LocationController {
     }
 
     /**
-     * Get location by name and country
-     * @param name Location name
-     * @param country Country name
-     * @return Location if found
-     */
-    @GetMapping("/search")
-    public ResponseEntity<Location> getLocationByNameAndCountry(
-            @RequestParam String name,
-            @RequestParam String country) {
-        return locationService.findByNameAndCountry(name, country)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    /**
      * Create a new location
      * @param location Location data
      * @return Created location
@@ -82,8 +66,7 @@ public class LocationController {
         return locationService.create(
                 location.getName(),
                 location.getLatitude(),
-                location.getLongitude(),
-                location.getCountry()
+                location.getLongitude()
         );
     }
 
@@ -102,7 +85,6 @@ public class LocationController {
                     existingLocation.setName(location.getName());
                     existingLocation.setLatitude(location.getLatitude());
                     existingLocation.setLongitude(location.getLongitude());
-                    existingLocation.setCountry(location.getCountry());
                     return locationService.save(existingLocation);
                 })
                 .map(ResponseEntity::ok)

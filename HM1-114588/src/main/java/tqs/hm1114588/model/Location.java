@@ -27,22 +27,11 @@ public class Location {
     @Column(nullable = false)
     private Double longitude;
     
-    @Column(nullable = false)
-    private String country;
-    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     // Default constructor
     public Location() {
-    }
-
-    // Constructor with parameters
-    public Location(String name, Double latitude, Double longitude, String country) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.country = country;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -79,14 +68,6 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -100,16 +81,12 @@ public class Location {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Location location = (Location) o;
-        return Objects.equals(id, location.id) &&
-                Objects.equals(name, location.name) &&
-                Objects.equals(latitude, location.latitude) &&
-                Objects.equals(longitude, location.longitude) &&
-                Objects.equals(country, location.country);
+        return Objects.equals(id, location.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, latitude, longitude, country);
+        return Objects.hash(id);
     }
 
     @Override
@@ -119,7 +96,6 @@ public class Location {
                 ", name='" + name + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", country='" + country + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }
