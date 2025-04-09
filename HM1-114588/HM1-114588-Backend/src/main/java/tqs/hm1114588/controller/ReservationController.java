@@ -204,4 +204,36 @@ public class ReservationController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    /**
+     * Update reservation status
+     * @param id Reservation ID
+     * @param statusUpdate Status update data
+     * @return Updated reservation if found
+     */
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Reservation> updateReservationStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> statusUpdate) {
+        
+        if (!statusUpdate.containsKey("status")) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        String statusStr = statusUpdate.get("status");
+        ReservationStatus status;
+        try {
+            status = ReservationStatus.valueOf(statusStr);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        return reservationService.findById(id)
+                .map(reservation -> {
+                    reservation.setStatus(status);
+                    return reservationService.save(reservation);
+                })
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 } 

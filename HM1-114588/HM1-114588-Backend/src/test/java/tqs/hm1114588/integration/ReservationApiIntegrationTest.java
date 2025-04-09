@@ -221,7 +221,7 @@ public class ReservationApiIntegrationTest {
             .get("/api/reservations/" + reservationId)
             .then()
             .statusCode(200)
-            .body("id", equalTo(reservationId))
+            .body("id", equalTo(reservationIdInt))
             .body("customerName", equalTo("Test Customer for Get"))
             .body("customerEmail", equalTo("testget@example.com"));
     }
@@ -317,7 +317,7 @@ public class ReservationApiIntegrationTest {
             .contentType(ContentType.JSON)
             .body(updateJson)
             .when()
-            .put("/api/reservations/" + reservationId + "/status")
+            .put("/api/reservations/" + reservationIdInt + "/status")
             .then()
             .statusCode(200)
             .body("status", equalTo("CONFIRMED"));
@@ -406,14 +406,14 @@ public class ReservationApiIntegrationTest {
         // Then delete the reservation
         given()
             .when()
-            .delete("/api/reservations/" + reservationId)
+            .delete("/api/reservations/" + reservationIdInt)
             .then()
             .statusCode(204);
 
         // Verify the reservation is deleted
         given()
             .when()
-            .get("/api/reservations/" + reservationId)
+            .get("/api/reservations/" + reservationIdInt)
             .then()
             .statusCode(404);
     }
