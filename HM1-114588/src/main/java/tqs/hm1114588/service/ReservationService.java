@@ -120,6 +120,16 @@ public class ReservationService {
         Restaurant restaurant = restaurantService.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
         
+        // Check if restaurant has enough capacity
+        if (!restaurantService.hasCapacityForReservation(restaurantId, reservationTime, partySize)) {
+            throw new IllegalStateException("Restaurant does not have enough capacity for this reservation");
+        }
+        
+        // Check if restaurant has enough menus
+        if (!restaurantService.hasEnoughMenus(restaurantId, menusRequired)) {
+            throw new IllegalStateException("Restaurant does not have enough menus for this reservation");
+        }
+        
         Reservation reservation = new Reservation();
         reservation.setRestaurant(restaurant);
         reservation.setCustomerName(customerName);
@@ -211,5 +221,24 @@ public class ReservationService {
     @CacheEvict(value = {"reservation", "reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
     public void deleteById(Long id) {
         reservationRepository.deleteById(id);
+    }
+
+    /**
+     * Mark a reservation as completed (used)
+     * @param token Reservation token
+     * @return Updated reservation if found and verified
+     */
+    @Transactional
+    @CachePut(value = "reservation", key = "#result.id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
+    public Optional<Reservation> verifyReservation(String token) {
+        return reservationRepository.findByToken(token)
+                .map(reservation -> {
+                    if (reservation.getStatus() == ReservationStatus.CHECKED_IN) {
+                        reservation.setStatus(ReservationStatus.COMPLETED);
+                        return reservationRepository.save(reservation);
+                    }
+                    return reservation;
+                });
     }
 } 

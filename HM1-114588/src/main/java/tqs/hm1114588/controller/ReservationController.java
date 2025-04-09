@@ -2,6 +2,7 @@ package tqs.hm1114588.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tqs.hm1114588.model.restaurant.Reservation;
+import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.service.ReservationService;
 
 @RestController
@@ -162,6 +164,29 @@ public class ReservationController {
     public ResponseEntity<Reservation> checkInReservation(@PathVariable String token) {
         return reservationService.checkInReservation(token)
                 .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Verify a reservation using its token and mark it as used
+     * @param token Reservation token
+     * @return Response with the result of the verification process
+     */
+    @PutMapping("/verify/{token}")
+    public ResponseEntity<?> verifyReservation(@PathVariable String token) {
+        return reservationService.verifyReservation(token)
+                .map(reservation -> {
+                    if (reservation.getStatus() == ReservationStatus.COMPLETED) {
+                        return ResponseEntity.ok().body(Map.of(
+                            "message", "Reservation verified and marked as completed",
+                            "reservation", reservation
+                        ));
+                    } else {
+                        return ResponseEntity.badRequest().body(Map.of(
+                            "message", "Reservation could not be verified. Ensure it has been checked in first."
+                        ));
+                    }
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

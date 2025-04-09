@@ -1,6 +1,10 @@
 package tqs.hm1114588.controller;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +42,14 @@ public class MenuController {
      * @return Menu if found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Menu> getMenuById(@PathVariable Long id) {
+    public ResponseEntity<Menu> getMenu(@PathVariable Long id) {
         return menuService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * Get menus by restaurant ID
+     * Get menus by restaurant
      * @param restaurantId Restaurant ID
      * @return List of menus
      */
@@ -53,51 +57,107 @@ public class MenuController {
     public List<Menu> getMenusByRestaurant(@PathVariable Long restaurantId) {
         return menuService.findByRestaurantId(restaurantId);
     }
-
+    
     /**
-     * Create a new menu
-     * @param menu Menu data
-     * @return Created menu
+     * Get available menus
+     * @return List of available menus
      */
-    @PostMapping
-    public Menu createMenu(@RequestBody Menu menu) {
-        return menuService.save(menu);
+    @GetMapping("/available")
+    public List<Menu> getAvailableMenus() {
+        return menuService.findAvailable();
+    }
+    
+    /**
+     * Get available menus by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of available menus
+     */
+    @GetMapping("/restaurant/{restaurantId}/available")
+    public List<Menu> getAvailableMenusByRestaurant(@PathVariable Long restaurantId) {
+        return menuService.findAvailableByRestaurant(restaurantId);
     }
 
     /**
-     * Update a menu
-     * @param id Menu ID
-     * @param menu Menu data
-     * @return Updated menu if found
+     * Create a new menu
+     * @param request Menu information
+     * @return Created menu
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<Menu> updateMenu(
-            @PathVariable Long id,
-            @RequestBody Menu menu) {
-        return menuService.findById(id)
-                .map(existingMenu -> {
-                    existingMenu.setName(menu.getName());
-                    existingMenu.setDescription(menu.getDescription());
-                    existingMenu.setPrice(menu.getPrice());
-                    existingMenu.setIsAvailable(menu.getIsAvailable());
-                    return menuService.save(existingMenu);
-                })
+    @PostMapping
+    public ResponseEntity<?> createMenu(@RequestBody Map<String, Object> request) {
+        try {
+            Long restaurantId = Long.valueOf(request.get("restaurantId").toString());
+            String name = (String) request.get("name");
+            String description = (String) request.get("description");
+            BigDecimal price = new BigDecimal(request.get("price").toString());
+            
+            @SuppressWarnings("unchecked")
+            List<Integer> dishIdsList = (List<Integer>) request.get("dishIds");
+            Set<Long> dishIds = new HashSet<>();
+            
+            for (Integer id : dishIdsList) {
+                dishIds.add(id.longValue());
+            }
+            
+            Menu menu = menuService.createMenu(restaurantId, name, description, price, dishIds);
+            return ResponseEntity.ok(menu);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Update menu availability
+     * @param id Menu ID
+     * @param request Update information
+     * @return Updated menu
+     */
+    @PutMapping("/{id}/availability")
+    public ResponseEntity<?> updateAvailability(@PathVariable Long id, @RequestBody Map<String, Boolean> request) {
+        Boolean isAvailable = request.get("isAvailable");
+        
+        return menuService.updateAvailability(id, isAvailable)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    /**
+     * Add dish to menu
+     * @param id Menu ID
+     * @param request Dish information
+     * @return Updated menu
+     */
+    @PutMapping("/{id}/dishes/add")
+    public ResponseEntity<?> addDishToMenu(@PathVariable Long id, @RequestBody Map<String, Long> request) {
+        Long dishId = request.get("dishId");
+        
+        return menuService.addDishToMenu(id, dishId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    /**
+     * Remove dish from menu
+     * @param id Menu ID
+     * @param request Dish information
+     * @return Updated menu
+     */
+    @PutMapping("/{id}/dishes/remove")
+    public ResponseEntity<?> removeDishFromMenu(@PathVariable Long id, @RequestBody Map<String, Long> request) {
+        Long dishId = request.get("dishId");
+        
+        return menuService.removeDishFromMenu(id, dishId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * Delete a menu
+     * Delete menu
      * @param id Menu ID
-     * @return No content if successful
+     * @return Success message
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long id) {
-        return menuService.findById(id)
-                .map(menu -> {
-                    menuService.deleteById(id);
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        menuService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 } 

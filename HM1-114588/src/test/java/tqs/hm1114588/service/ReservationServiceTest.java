@@ -139,6 +139,8 @@ class ReservationServiceTest {
         // Arrange
         LocalDateTime reservationTime = LocalDateTime.now().plusDays(1);
         when(restaurantService.findById(1L)).thenReturn(Optional.of(restaurant));
+        when(restaurantService.hasCapacityForReservation(1L, reservationTime, 4)).thenReturn(true);
+        when(restaurantService.hasEnoughMenus(1L, 4)).thenReturn(true);
         when(reservationRepository.save(any(Reservation.class))).thenAnswer(invocation -> {
             Reservation savedReservation = invocation.getArgument(0);
             savedReservation.setId(1L);
@@ -159,6 +161,8 @@ class ReservationServiceTest {
         assertEquals(ReservationStatus.PENDING, result.getStatus());
         assertNotNull(result.getToken());
         verify(restaurantService).findById(1L);
+        verify(restaurantService).hasCapacityForReservation(1L, reservationTime, 4);
+        verify(restaurantService).hasEnoughMenus(1L, 4);
         verify(reservationRepository).save(any(Reservation.class));
     }
 
@@ -257,6 +261,39 @@ class ReservationServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(ReservationStatus.PENDING, result.get().getStatus()); // Status should not change
+        verify(reservationRepository).findByToken("test-token-123");
+        verify(reservationRepository, never()).save(reservation);
+    }
+
+    @Test
+    void testVerifyReservation_WhenCheckedIn() {
+        // Arrange
+        reservation.setStatus(ReservationStatus.CHECKED_IN);
+        when(reservationRepository.findByToken("test-token-123")).thenReturn(Optional.of(reservation));
+        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
+
+        // Act
+        Optional<Reservation> result = reservationService.verifyReservation("test-token-123");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ReservationStatus.COMPLETED, result.get().getStatus());
+        verify(reservationRepository).findByToken("test-token-123");
+        verify(reservationRepository).save(reservation);
+    }
+
+    @Test
+    void testVerifyReservation_WhenNotCheckedIn() {
+        // Arrange
+        reservation.setStatus(ReservationStatus.CONFIRMED);
+        when(reservationRepository.findByToken("test-token-123")).thenReturn(Optional.of(reservation));
+
+        // Act
+        Optional<Reservation> result = reservationService.verifyReservation("test-token-123");
+
+        // Assert
+        assertTrue(result.isPresent());
+        assertEquals(ReservationStatus.CONFIRMED, result.get().getStatus()); // Status should not change
         verify(reservationRepository).findByToken("test-token-123");
         verify(reservationRepository, never()).save(reservation);
     }
