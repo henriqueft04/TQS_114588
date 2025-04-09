@@ -31,8 +31,14 @@ const RestaurantPage = () => {
             </figure>
             <div className="card-body">
               <h2 className="card-title">{restaurant.name}</h2>
-              <p>Capacity: {restaurant.capacity}</p>
-              <p>Available Menus: {restaurant.availableMenus}</p>
+              <p>
+                <i className="fas fa-users mr-2"></i>
+                Capacity: {restaurant.capacity}
+              </p>
+              <p>
+                <i className="fas fa-book-open mr-2"></i>
+                Available Menus: {restaurant.availableMenus}
+              </p>
               <div className="card-actions justify-end">
                 <Link to={`/restaurants/${restaurant.id}`} className="btn btn-primary">
                   View Details

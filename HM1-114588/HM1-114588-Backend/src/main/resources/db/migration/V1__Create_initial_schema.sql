@@ -33,7 +33,9 @@ CREATE TABLE IF NOT EXISTS restaurants (
     name VARCHAR(255) NOT NULL,
     location_id BIGINT NOT NULL REFERENCES locations(id),
     capacity INTEGER NOT NULL,
-    available_menus INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    operating_hours VARCHAR(255) NOT NULL,
+    contact_info VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -57,26 +59,36 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS schedules (
     id BIGSERIAL PRIMARY KEY,
     restaurant_id BIGINT NOT NULL REFERENCES restaurants(id),
-    name VARCHAR(255) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
 );
 
 CREATE TABLE IF NOT EXISTS meals (
     id BIGSERIAL PRIMARY KEY,
     restaurant_id BIGINT NOT NULL REFERENCES restaurants(id),
     schedule_id BIGINT REFERENCES schedules(id),
+    name VARCHAR(255) NOT NULL,
     meal_type VARCHAR(50) NOT NULL,
-    day_of_week VARCHAR(50) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE
+    description TEXT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+    CONSTRAINT fk_schedule FOREIGN KEY (schedule_id) REFERENCES schedules(id)
 );
 
 CREATE TABLE IF NOT EXISTS menus (
     id BIGSERIAL PRIMARY KEY,
-    restaurant_id BIGINT NOT NULL REFERENCES restaurants(id),
     name VARCHAR(255) NOT NULL,
-    is_available BOOLEAN DEFAULT TRUE NOT NULL
+    description TEXT NOT NULL,
+    date DATE NOT NULL,
+    meal_id BIGINT NOT NULL REFERENCES meals(id),
+    is_available BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_meal FOREIGN KEY (meal_id) REFERENCES meals(id)
 );
 
 CREATE TABLE IF NOT EXISTS dishes (
@@ -85,14 +97,18 @@ CREATE TABLE IF NOT EXISTS dishes (
     description TEXT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     is_available BOOLEAN DEFAULT TRUE NOT NULL,
-    type VARCHAR(50) NOT NULL
+    type VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Join table for menu-dish many-to-many relationship
 CREATE TABLE IF NOT EXISTS menu_dishes (
     menu_id BIGINT NOT NULL REFERENCES menus(id),
     dish_id BIGINT NOT NULL REFERENCES dishes(id),
-    PRIMARY KEY (menu_id, dish_id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (menu_id, dish_id),
+    CONSTRAINT fk_menu FOREIGN KEY (menu_id) REFERENCES menus(id),
+    CONSTRAINT fk_dish FOREIGN KEY (dish_id) REFERENCES dishes(id)
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
@@ -111,5 +127,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_group_reservation BOOLEAN DEFAULT FALSE,
     menus_required INTEGER,
-    token VARCHAR(255) UNIQUE
+    token VARCHAR(255) UNIQUE,
+    CONSTRAINT fk_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
 );

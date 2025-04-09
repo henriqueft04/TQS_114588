@@ -1,5 +1,6 @@
 package tqs.hm1114588.model.restaurant;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -37,8 +38,8 @@ public class Meal {
     @Column()
     private String description;
 
-    @Column()
-    private String price;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id")
@@ -112,11 +113,11 @@ public class Meal {
         this.description = description;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

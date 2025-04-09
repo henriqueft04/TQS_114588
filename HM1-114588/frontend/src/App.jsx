@@ -1,26 +1,55 @@
-import { useState } from 'react'
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import RestaurantPage from './pages/RestaurantPage'
-import Navbar from './components/Navbar'
-import ProfilePage from './pages/ProfilePage'
-import ReservationsPage from './pages/ReservationsPage'
-import RestaurantDetailPage from './pages/RestaurantDetailPage'
+import RestaurantPage from './pages/RestaurantPage';
+import RestaurantDetailPage from './pages/RestaurantDetailPage';
+import ReservationConfirmationPage from './pages/ReservationConfirmationPage';
+import ProfilePage from './pages/ProfilePage';
+import ReservationsPage from './pages/ReservationsPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import Navbar from './components/Navbar';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<RestaurantPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/reservations" element={<ReservationsPage />} />
-        <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
-        {/* TODO: Add routes for other pages */}
-      </Routes>
+      <div className="min-h-screen bg-base-200 flex flex-col">
+        <header className="bg-primary text-primary-content shadow-lg">
+          <div className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold">Moliceiro University Campus</h1>
+          </div>
+        </header>
+        
+        <main className="flex-grow p-4">
+          <Routes>
+            <Route path="/" element={<RestaurantPage />} />
+            <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
+            <Route path="/reservations/:id" element={<ReservationConfirmationPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfilePage />
+                </PrivateRoute>
+              }
+            />
+            <Route 
+              path="/reservations"
+              element={
+                <PrivateRoute>
+                  <ReservationsPage />  
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </main>
+        
+        <Navbar />
+      </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
