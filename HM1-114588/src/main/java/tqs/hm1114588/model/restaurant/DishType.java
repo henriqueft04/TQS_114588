@@ -1,4 +1,4 @@
-package tqs.hm1114588.model;
+package tqs.hm1114588.model.restaurant;
 
 public enum DishType {
     Sopa,

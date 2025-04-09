@@ -1,4 +1,4 @@
-package tqs.hm1114588.model;
+package tqs.hm1114588.model.restaurant;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
+import tqs.hm1114588.model.User;
 @Entity
 @Table(name = "reservations")
 public class Reservation {
@@ -24,6 +24,10 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
 
     @Column(nullable = false)
     private String customerName;
@@ -70,6 +74,7 @@ public class Reservation {
         this.createdAt = LocalDateTime.now();
         this.status = ReservationStatus.PENDING;
         this.isGroupReservation = false;
+        this.user = null;
     }
 
     // Getters and Setters
@@ -87,6 +92,14 @@ public class Reservation {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getCustomerName() {

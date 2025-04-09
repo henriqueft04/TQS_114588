@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import tqs.hm1114588.model.Restaurant;
+import tqs.hm1114588.model.restaurant.Restaurant;
 import tqs.hm1114588.repository.RestaurantRepository;
 
 @Service
@@ -57,6 +57,22 @@ public class RestaurantService {
     @CachePut(value = "restaurant", key = "#result.id")
     @CacheEvict(value = {"restaurants", "restaurantByName"}, allEntries = true)
     public Restaurant save(Restaurant restaurant) {
+        return restaurantRepository.save(restaurant);
+    }
+
+    /**
+     * Create a new restaurant
+     * @param name Restaurant name
+     * @param capacity Restaurant capacity
+     * @return Created restaurant
+     */
+    @Transactional
+    @CachePut(value = "restaurant", key = "#result.id")
+    @CacheEvict(value = {"restaurants", "restaurantByName"}, allEntries = true)
+    public Restaurant createRestaurant(String name, Integer capacity) {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName(name);
+        restaurant.setCapacity(capacity);
         return restaurantRepository.save(restaurant);
     }
 

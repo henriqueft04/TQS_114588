@@ -1,4 +1,4 @@
-package tqs.hm1114588.model;
+package tqs.hm1114588.model.restaurant;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import tqs.hm1114588.model.Location;
 
 @Entity
 @Table(name = "restaurants")

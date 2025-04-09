@@ -12,9 +12,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import tqs.hm1114588.model.Reservation;
-import tqs.hm1114588.model.ReservationStatus;
-import tqs.hm1114588.model.Restaurant;
+import tqs.hm1114588.model.restaurant.Reservation;
+import tqs.hm1114588.model.restaurant.ReservationStatus;
+import tqs.hm1114588.model.restaurant.Restaurant;
 import tqs.hm1114588.repository.ReservationRepository;
 
 @Service
@@ -163,6 +163,21 @@ public class ReservationService {
     @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
     public Optional<Reservation> confirmReservation(Long id) {
         return reservationRepository.findById(id)
+                .map(reservation -> {
+                    reservation.setStatus(ReservationStatus.CONFIRMED);
+                    return reservationRepository.save(reservation);
+                });
+    }
+
+    /**
+     * Confirm a reservation by token
+     * @param token Reservation token
+     * @return Updated reservation if found
+     */
+    @Transactional
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
+    public Optional<Reservation> confirmReservation(String token) {
+        return reservationRepository.findByToken(token)
                 .map(reservation -> {
                     reservation.setStatus(ReservationStatus.CONFIRMED);
                     return reservationRepository.save(reservation);

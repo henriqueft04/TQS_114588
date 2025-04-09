@@ -1,4 +1,4 @@
-package tqs.hm1114588.model;
+package tqs.hm1114588.model.restaurant;
 
 import java.util.HashSet;
 import java.util.Set;

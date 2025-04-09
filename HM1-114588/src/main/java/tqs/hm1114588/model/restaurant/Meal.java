@@ -1,4 +1,4 @@
-package tqs.hm1114588.model;
+package tqs.hm1114588.model.restaurant;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import tqs.hm1114588.model.Schedule;
 
 @Entity
 @Table(name = "meals")
@@ -116,4 +117,5 @@ public class Meal {
     public void setActive(boolean active) {
         isActive = active;
     }
+
 }

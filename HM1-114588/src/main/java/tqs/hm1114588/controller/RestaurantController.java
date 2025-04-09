@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import tqs.hm1114588.model.Restaurant;
+import tqs.hm1114588.model.restaurant.Restaurant;
 import tqs.hm1114588.service.RestaurantService;
 
 @RestController

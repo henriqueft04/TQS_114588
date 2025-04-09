@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import tqs.hm1114588.model.Reservation;
+import tqs.hm1114588.model.restaurant.Reservation;
 import tqs.hm1114588.service.ReservationService;
 
 @RestController

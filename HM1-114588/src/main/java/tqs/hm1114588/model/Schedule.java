@@ -1,6 +1,5 @@
 package tqs.hm1114588.model;
 
-import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import tqs.hm1114588.model.restaurant.Meal;
+import tqs.hm1114588.model.restaurant.Restaurant;
 
 @Entity
 @Table(name = "schedules")
