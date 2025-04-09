@@ -82,12 +82,13 @@ public class DishController {
      * @return Created dish
      */
     @PostMapping
-    public ResponseEntity<Dish> createDish(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String description = request.get("description");
-        DishType type = DishType.valueOf(request.get("type"));
+    public ResponseEntity<Dish> createDish(@RequestBody Map<String, Object> request) {
+        String name = (String) request.get("name");
+        String description = (String) request.get("description");
+        DishType type = DishType.valueOf((String) request.get("type"));
+        double price = Double.parseDouble(request.get("price").toString());
         
-        Dish dish = dishService.createDish(name, description, type);
+        Dish dish = dishService.createDish(name, description, type, price);
         return ResponseEntity.ok(dish);
     }
     

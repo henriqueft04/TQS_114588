@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ class DishControllerTest {
         dish.setDescription("A delicious test dish");
         dish.setType(DishType.Peixe);
         dish.setIsAvailable(true);
+        dish.setPrice(new BigDecimal("12.99"));
     }
 
     @Test
@@ -160,12 +162,13 @@ class DishControllerTest {
     @Test
     void testCreateDish() throws Exception {
         // Arrange
-        Map<String, String> request = new HashMap<>();
+        Map<String, Object> request = new HashMap<>();
         request.put("name", "New Dish");
         request.put("description", "A new delicious dish");
         request.put("type", "Peixe");
+        request.put("price", "15.99");
 
-        when(dishService.createDish(anyString(), anyString(), any(DishType.class))).thenReturn(dish);
+        when(dishService.createDish(anyString(), anyString(), any(DishType.class), any(Double.class))).thenReturn(dish);
 
         // Act & Assert
         mockMvc.perform(post("/api/dishes")
@@ -175,7 +178,7 @@ class DishControllerTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Test Dish")));
         
-        verify(dishService).createDish("New Dish", "A new delicious dish", DishType.Peixe);
+        verify(dishService).createDish("New Dish", "A new delicious dish", DishType.Peixe, 15.99);
     }
 
     @Test

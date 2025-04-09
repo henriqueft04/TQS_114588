@@ -1,5 +1,6 @@
 package tqs.hm1114588.model.restaurant;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "dishes")
@@ -35,6 +37,9 @@ public class Dish {
 
     @Column(nullable = false)
     private Boolean isAvailable;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     // Default constructor
     public Dish() {
@@ -89,4 +94,14 @@ public class Dish {
     public void setIsAvailable(Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    
+    
 }

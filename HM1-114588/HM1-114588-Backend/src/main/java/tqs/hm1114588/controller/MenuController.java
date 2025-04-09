@@ -1,6 +1,5 @@
 package tqs.hm1114588.controller;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +87,6 @@ public class MenuController {
             Long restaurantId = Long.valueOf(request.get("restaurantId").toString());
             String name = (String) request.get("name");
             String description = (String) request.get("description");
-            BigDecimal price = new BigDecimal(request.get("price").toString());
             
             @SuppressWarnings("unchecked")
             List<Integer> dishIdsList = (List<Integer>) request.get("dishIds");
@@ -98,7 +96,7 @@ public class MenuController {
                 dishIds.add(id.longValue());
             }
             
-            Menu menu = menuService.createMenu(restaurantId, name, description, price, dishIds);
+            Menu menu = menuService.createMenu(restaurantId, name, description, dishIds);
             return ResponseEntity.ok(menu);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

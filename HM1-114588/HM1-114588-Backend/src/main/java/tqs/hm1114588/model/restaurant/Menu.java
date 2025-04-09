@@ -1,6 +1,5 @@
 package tqs.hm1114588.model.restaurant;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,8 +41,6 @@ public class Menu {
     )
     private Set<Dish> dishes = new HashSet<>();
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
 
     @Column(nullable = false)
     private Boolean isAvailable;
@@ -94,13 +91,6 @@ public class Menu {
         this.dishes = dishes;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 
     public Boolean getIsAvailable() {
         return isAvailable;

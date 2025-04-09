@@ -73,7 +73,6 @@ class MenuControllerTest {
         menu.setId(1L);
         menu.setName("Test Menu");
         menu.setDescription("Menu for tests");
-        menu.setPrice(new BigDecimal("19.99"));
         menu.setRestaurant(restaurant);
         menu.setDishes(dishes);
     }
@@ -161,7 +160,6 @@ class MenuControllerTest {
             "restaurantId", 1L,
             "name", "New Menu",
             "description", "A new test menu",
-            "price", "29.99",
             "dishIds", Arrays.asList(1, 2, 3)
         );
         
@@ -169,7 +167,6 @@ class MenuControllerTest {
             eq(1L), 
             eq("New Menu"), 
             eq("A new test menu"), 
-            eq(new BigDecimal("29.99")),
             any()
         )).thenReturn(menu);
 
@@ -184,7 +181,6 @@ class MenuControllerTest {
             eq(1L), 
             eq("New Menu"), 
             eq("A new test menu"), 
-            eq(new BigDecimal("29.99")),
             any()
         );
     }
@@ -195,7 +191,6 @@ class MenuControllerTest {
         Map<String, Object> requestBody = Map.of(
             "restaurantId", 1L,
             "name", "New Menu",
-            "price", "invalid-price",
             "dishIds", Arrays.asList(1, 2, 3)
         );
         
@@ -203,9 +198,8 @@ class MenuControllerTest {
             any(), 
             any(), 
             any(), 
-            any(),
             any()
-        )).thenThrow(new IllegalArgumentException("Invalid price"));
+        )).thenThrow(new IllegalArgumentException("Invalid request"));
 
         mockMvc.perform(post("/api/menus")
                 .contentType(MediaType.APPLICATION_JSON)

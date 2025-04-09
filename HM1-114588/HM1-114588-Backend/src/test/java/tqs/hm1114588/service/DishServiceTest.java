@@ -1,5 +1,6 @@
 package tqs.hm1114588.service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,7 @@ class DishServiceTest {
         dish.setDescription("Test Description");
         dish.setType(DishType.Carne);
         dish.setIsAvailable(true);
+        dish.setPrice(new BigDecimal("9.99"));
     }
 
     @Test
@@ -122,13 +124,14 @@ class DishServiceTest {
         });
 
         // Act
-        Dish result = dishService.createDish("New Dish", "New Description", DishType.Sobremesa);
+        Dish result = dishService.createDish("New Dish", "New Description", DishType.Sobremesa, 12.99);
 
         // Assert
         assertEquals(1L, result.getId());
         assertEquals("New Dish", result.getName());
         assertEquals("New Description", result.getDescription());
         assertEquals(DishType.Sobremesa, result.getType());
+        assertEquals(new BigDecimal("12.99"), result.getPrice());
         assertTrue(result.getIsAvailable());
         verify(dishRepository).save(any(Dish.class));
     }

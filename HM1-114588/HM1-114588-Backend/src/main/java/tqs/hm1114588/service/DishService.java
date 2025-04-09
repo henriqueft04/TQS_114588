@@ -1,5 +1,6 @@
 package tqs.hm1114588.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,17 +74,19 @@ public class DishService {
      * @param name Dish name
      * @param description Dish description
      * @param type Dish type
+     * @param price Dish price
      * @return Created dish
      */
     @Transactional
     @CachePut(value = "dish", key = "#result.id")
     @CacheEvict(value = {"dishes", "dishesByType", "availableDishes", "dishesByName"}, allEntries = true)
-    public Dish createDish(String name, String description, DishType type) {
+    public Dish createDish(String name, String description, DishType type, double price) {
         Dish dish = new Dish();
         dish.setName(name);
         dish.setDescription(description);
         dish.setType(type);
         dish.setIsAvailable(true);
+        dish.setPrice(BigDecimal.valueOf(price));
         
         return dishRepository.save(dish);
     }

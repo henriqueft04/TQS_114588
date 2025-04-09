@@ -1,6 +1,5 @@
 package tqs.hm1114588.service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -84,14 +83,13 @@ public class MenuService {
      * @param restaurantId Restaurant ID
      * @param name Menu name
      * @param description Menu description
-     * @param price Menu price
      * @param dishIds Dish IDs to include
      * @return Created menu
      */
     @Transactional
     @CachePut(value = "menu", key = "#result.id")
     @CacheEvict(value = {"menus", "menusByRestaurant", "availableMenus", "availableMenusByRestaurant"}, allEntries = true)
-    public Menu createMenu(Long restaurantId, String name, String description, BigDecimal price, Set<Long> dishIds) {
+    public Menu createMenu(Long restaurantId, String name, String description, Set<Long> dishIds) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
         
@@ -103,7 +101,6 @@ public class MenuService {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setDescription(description);
-        menu.setPrice(price);
         menu.setRestaurant(restaurant);
         menu.setIsAvailable(true);
         

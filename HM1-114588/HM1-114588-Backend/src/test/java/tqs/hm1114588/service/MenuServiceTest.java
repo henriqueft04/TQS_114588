@@ -1,6 +1,5 @@
 package tqs.hm1114588.service;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -75,7 +74,6 @@ class MenuServiceTest {
         menu.setName("Test Menu");
         menu.setDescription("Test Description");
         menu.setRestaurant(restaurant);
-        menu.setPrice(new BigDecimal("19.99"));
         menu.setIsAvailable(true);
         menu.addDish(dish1);
     }
@@ -171,7 +169,6 @@ class MenuServiceTest {
                 1L, 
                 "New Menu", 
                 "New Description", 
-                new BigDecimal("29.99"), 
                 dishIds
         );
 
@@ -179,7 +176,6 @@ class MenuServiceTest {
         assertEquals(2L, result.getId());
         assertEquals("New Menu", result.getName());
         assertEquals("New Description", result.getDescription());
-        assertEquals(new BigDecimal("29.99"), result.getPrice());
         assertEquals(restaurant, result.getRestaurant());
         assertTrue(result.getIsAvailable());
         verify(restaurantRepository).findById(1L);
@@ -201,7 +197,6 @@ class MenuServiceTest {
                     99L, 
                     "New Menu", 
                     "New Description", 
-                    new BigDecimal("29.99"), 
                     dishIds
             );
         });

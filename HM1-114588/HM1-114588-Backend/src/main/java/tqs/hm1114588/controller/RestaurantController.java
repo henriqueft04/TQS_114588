@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.restaurant.Restaurant;
+import tqs.hm1114588.service.LocationService;
 import tqs.hm1114588.service.RestaurantService;
 
 @RestController
@@ -26,6 +28,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantService restaurantService;
+    
+    @Autowired
+    private LocationService locationService;
 
     /**
      * Get all restaurants
@@ -147,6 +152,11 @@ public class RestaurantController {
      */
     @PostMapping
     public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
+        // Save the location first if it exists
+        if (restaurant.getLocation() != null) {
+            Location savedLocation = locationService.save(restaurant.getLocation());
+            restaurant.setLocation(savedLocation);
+        }
         return restaurantService.save(restaurant);
     }
 
@@ -163,7 +173,13 @@ public class RestaurantController {
         return restaurantService.findById(id)
                 .map(existingRestaurant -> {
                     existingRestaurant.setName(restaurant.getName());
-                    existingRestaurant.setLocation(restaurant.getLocation());
+                    
+                    // Handle location update
+                    if (restaurant.getLocation() != null) {
+                        Location savedLocation = locationService.save(restaurant.getLocation());
+                        existingRestaurant.setLocation(savedLocation);
+                    }
+                    
                     existingRestaurant.setCapacity(restaurant.getCapacity());
                     existingRestaurant.setAvailableMenus(restaurant.getAvailableMenus());
                     return restaurantService.save(existingRestaurant);
