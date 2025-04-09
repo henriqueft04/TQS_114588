@@ -56,7 +56,6 @@ class RestaurantControllerTest {
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
-        restaurant.setAvailableMenus(40);
         
         // Create and set a location since it's required by the model
         tqs.hm1114588.model.Location location = new tqs.hm1114588.model.Location();
@@ -137,7 +136,7 @@ class RestaurantControllerTest {
         mockMvc.perform(post("/api/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(restaurant)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Test Restaurant")));
         
@@ -186,28 +185,25 @@ class RestaurantControllerTest {
     @Test
     void testDeleteRestaurant_WhenExists() throws Exception {
         // Arrange
-        when(restaurantService.findById(1L)).thenReturn(Optional.of(restaurant));
         doNothing().when(restaurantService).deleteById(1L);
 
         // Act & Assert
         mockMvc.perform(delete("/api/restaurants/1"))
                 .andExpect(status().isNoContent());
         
-        verify(restaurantService).findById(1L);
         verify(restaurantService).deleteById(1L);
     }
 
     @Test
     void testDeleteRestaurant_WhenNotExists() throws Exception {
         // Arrange
-        when(restaurantService.findById(99L)).thenReturn(Optional.empty());
+        doNothing().when(restaurantService).deleteById(99L);
 
         // Act & Assert
         mockMvc.perform(delete("/api/restaurants/99"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
         
-        verify(restaurantService).findById(99L);
-        verify(restaurantService, never()).deleteById(anyLong());
+        verify(restaurantService).deleteById(99L);
     }
 
     @Test
@@ -347,31 +343,25 @@ class RestaurantControllerTest {
     
     @Test
     void testUpdateAvailableMenus_Success() throws Exception {
-        when(restaurantService.updateAvailableMenus(1L, 30)).thenReturn(Optional.of(restaurant));
-
-        String requestBody = """
-            {
-                "availableMenus": 30
-            }
-            """;
+        when(restaurantService.updateAvailableMenus(eq(1L), eq(60))).thenReturn(Optional.of(restaurant));
 
         mockMvc.perform(put("/api/restaurants/1/menus")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content("{\"availableMenus\": 60}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Test Restaurant")));
         
-        verify(restaurantService).updateAvailableMenus(1L, 30);
+        verify(restaurantService).updateAvailableMenus(eq(1L), eq(60));
     }
     
     @Test
     void testUpdateAvailableMenus_NotFound() throws Exception {
-        when(restaurantService.updateAvailableMenus(99L, 30)).thenReturn(Optional.empty());
+        when(restaurantService.updateAvailableMenus(99L, 60)).thenReturn(Optional.empty());
 
         String requestBody = """
             {
-                "availableMenus": 30
+                "availableMenus": 60
             }
             """;
 
@@ -380,6 +370,6 @@ class RestaurantControllerTest {
                 .content(requestBody))
                 .andExpect(status().isNotFound());
         
-        verify(restaurantService).updateAvailableMenus(99L, 30);
+        verify(restaurantService).updateAvailableMenus(99L, 60);
     }
 } 

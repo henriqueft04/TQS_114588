@@ -11,11 +11,11 @@ import tqs.hm1114588.model.restaurant.Menu;
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     
     /**
-     * Find menus by restaurant ID
-     * @param restaurantId Restaurant ID
+     * Find menus by meal ID
+     * @param mealId Meal ID
      * @return List of menus
      */
-    List<Menu> findByRestaurantId(Long restaurantId);
+    List<Menu> findByMealId(Long mealId);
     
     /**
      * Find available menus
@@ -24,9 +24,9 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     List<Menu> findByIsAvailableTrue();
     
     /**
-     * Find available menus by restaurant
-     * @param restaurantId Restaurant ID
+     * Find available menus by meal
+     * @param mealId Meal ID
      * @return List of available menus
      */
-    List<Menu> findByRestaurantIdAndIsAvailableTrue(Long restaurantId);
+    List<Menu> findByMealIdAndIsAvailableTrue(Long mealId);
 } 

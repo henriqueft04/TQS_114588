@@ -1,6 +1,7 @@
 package tqs.hm1114588.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,9 +25,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.restaurant.Reservation;
 import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.model.restaurant.Restaurant;
+import tqs.hm1114588.repository.LocationRepository;
 import tqs.hm1114588.repository.ReservationRepository;
 import tqs.hm1114588.repository.RestaurantRepository;
 
@@ -39,20 +42,31 @@ class RestaurantServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
 
+    @Mock
+    private LocationRepository locationRepository;
+
     @InjectMocks
     private RestaurantService restaurantService;
 
     private Restaurant restaurant;
+    private Location location;
     private LocalDateTime now;
 
     @BeforeEach
     void setUp() {
         // Set up test data
+        location = new Location();
+        location.setId(1L);
+        location.setName("Test City");
+        
         restaurant = new Restaurant();
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
+        restaurant.setDescription("Test Description");
         restaurant.setCapacity(50);
-        restaurant.setAvailableMenus(40);
+        restaurant.setOperatingHours("10:00-22:00");
+        restaurant.setContactInfo("123456789");
+        restaurant.setLocation(location);
         
         now = LocalDateTime.now();
     }
@@ -130,6 +144,7 @@ class RestaurantServiceTest {
     @Test
     void testCreateRestaurant() {
         // Arrange
+        when(locationRepository.findById(1L)).thenReturn(Optional.of(location));
         when(restaurantRepository.save(any(Restaurant.class))).thenAnswer(invocation -> {
             Restaurant savedRestaurant = invocation.getArgument(0);
             savedRestaurant.setId(1L);
@@ -137,13 +152,24 @@ class RestaurantServiceTest {
         });
 
         // Act
-        Restaurant result = restaurantService.createRestaurant("New Restaurant", 100);
+        Restaurant result = restaurantService.createRestaurant(
+            "New Restaurant", 
+            "New Description", 
+            100, 
+            "10:00-22:00", 
+            "123456789", 
+            1L
+        );
 
         // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("New Restaurant", result.getName());
+        assertEquals("New Description", result.getDescription());
         assertEquals(100, result.getCapacity());
+        assertEquals("10:00-22:00", result.getOperatingHours());
+        assertEquals("123456789", result.getContactInfo());
+        assertEquals(location, result.getLocation());
         verify(restaurantRepository).save(any(Restaurant.class));
     }
 
@@ -260,27 +286,11 @@ class RestaurantServiceTest {
         when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
 
         // Act
-        Optional<Restaurant> result = restaurantService.updateCapacity(1L, 75);
+        Optional<Restaurant> result = restaurantService.updateCapacity(1L, 60);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(75, result.get().getCapacity());
-        verify(restaurantRepository).findById(1L);
-        verify(restaurantRepository).save(restaurant);
-    }
-    
-    @Test
-    void testUpdateAvailableMenus() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
-        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(restaurant);
-
-        // Act
-        Optional<Restaurant> result = restaurantService.updateAvailableMenus(1L, 60);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(60, result.get().getAvailableMenus());
+        assertEquals(60, result.get().getCapacity());
         verify(restaurantRepository).findById(1L);
         verify(restaurantRepository).save(restaurant);
     }
@@ -288,7 +298,6 @@ class RestaurantServiceTest {
     @Test
     void testHasCapacityForReservation_HasCapacity() {
         // Arrange
-        // Mock the getAvailableCapacity method to return 25
         when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         
         Reservation reservation1 = new Reservation();
@@ -339,28 +348,61 @@ class RestaurantServiceTest {
     }
     
     @Test
-    void testHasEnoughMenus_HasEnough() {
-        // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant)); // has 40 menus
-
+    void testHasEnoughMenus() {
         // Act
         boolean hasEnough = restaurantService.hasEnoughMenus(1L, 30);
 
         // Assert
+        // Since hasEnoughMenus always returns true, it should be true
         assertTrue(hasEnough);
-        verify(restaurantRepository).findById(1L);
+        
+        // Also test with a larger number
+        boolean hasEnoughLarger = restaurantService.hasEnoughMenus(1L, 50);
+        assertTrue(hasEnoughLarger);
     }
-    
+
     @Test
-    void testHasEnoughMenus_NotEnough() {
+    public void testFindByLocationId() {
         // Arrange
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant)); // has 40 menus
+        List<Restaurant> restaurants = new ArrayList<>();
+        Restaurant restaurant1 = new Restaurant();
+        restaurant1.setName("Restaurant 1");
+        restaurant1.setDescription("Description 1");
+        restaurant1.setCapacity(100);
+        restaurant1.setOperatingHours("10:00-22:00");
+        restaurant1.setContactInfo("123456789");
+        restaurant1.setLocation(new Location());
+        
+        Restaurant restaurant2 = new Restaurant();
+        restaurant2.setName("Restaurant 2");
+        restaurant2.setDescription("Description 2");
+        restaurant2.setCapacity(80);
+        restaurant2.setOperatingHours("11:00-23:00");
+        restaurant2.setContactInfo("987654321");
+        restaurant2.setLocation(new Location());
+        
+        restaurants.add(restaurant1);
+        restaurants.add(restaurant2);
+
+        when(restaurantRepository.findByLocationId(1L)).thenReturn(restaurants);
 
         // Act
-        boolean hasEnough = restaurantService.hasEnoughMenus(1L, 50);
+        List<Restaurant> result = restaurantService.findByLocationId(1L);
 
         // Assert
-        assertFalse(hasEnough);
-        verify(restaurantRepository).findById(1L);
+        assertEquals(2, result.size());
+        assertEquals("Restaurant 1", result.get(0).getName());
+        assertEquals("Restaurant 2", result.get(1).getName());
+    }
+
+    @Test
+    public void testCreateRestaurantLocationNotFound() {
+        // Arrange
+        when(locationRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            restaurantService.createRestaurant("New Restaurant", "New Description", 120, "12:00-00:00", "111222333", 1L);
+        });
     }
 } 

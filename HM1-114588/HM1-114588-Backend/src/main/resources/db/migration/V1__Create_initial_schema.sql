@@ -76,7 +76,6 @@ CREATE TABLE IF NOT EXISTS menus (
     id BIGSERIAL PRIMARY KEY,
     restaurant_id BIGINT NOT NULL REFERENCES restaurants(id),
     name VARCHAR(255) NOT NULL,
-    description TEXT NOT NULL,
     is_available BOOLEAN DEFAULT TRUE NOT NULL
 );
 

@@ -85,7 +85,9 @@ public class RestaurantApiIntegrationTest {
                         "longitude": -74.0060
                     },
                     "capacity": 100,
-                    "availableMenus": 3
+                    "operatingHours": "10:00-22:00",
+                    "contactInfo": "123-456-7890",
+                    "description": "A test restaurant"
                 }
                 """, locationId);
 
@@ -95,11 +97,10 @@ public class RestaurantApiIntegrationTest {
                 .when()
                 .post("/api/restaurants")
                 .then()
-                .statusCode(200)
+                .statusCode(201)
                 .body("id", notNullValue())
                 .body("name", equalTo("Test Restaurant"))
                 .body("capacity", equalTo(100))
-                .body("availableMenus", equalTo(3))
                 .body("location.id", equalTo(locationId));
     }
 
@@ -135,7 +136,9 @@ public class RestaurantApiIntegrationTest {
                         "longitude": -74.0060
                     },
                     "capacity": 100,
-                    "availableMenus": 3
+                    "operatingHours": "10:00-22:00",
+                    "contactInfo": "123-456-7890",
+                    "description": "A test restaurant for get"
                 }
                 """, locationId);
 
@@ -145,7 +148,7 @@ public class RestaurantApiIntegrationTest {
                 .when()
                 .post("/api/restaurants")
                 .then()
-                .statusCode(200)
+                .statusCode(201)
                 .extract()
                 .path("id");
 
@@ -158,7 +161,6 @@ public class RestaurantApiIntegrationTest {
                 .body("id", equalTo(id))
                 .body("name", equalTo("Test Restaurant for Get"))
                 .body("capacity", equalTo(100))
-                .body("availableMenus", equalTo(3))
                 .body("location.id", equalTo(locationId));
     }
 
@@ -194,7 +196,9 @@ public class RestaurantApiIntegrationTest {
                         "longitude": -74.0060
                     },
                     "capacity": 100,
-                    "availableMenus": 3
+                    "operatingHours": "10:00-22:00",
+                    "contactInfo": "123-456-7890",
+                    "description": "A test restaurant for update"
                 }
                 """, locationId);
 
@@ -204,7 +208,7 @@ public class RestaurantApiIntegrationTest {
                 .when()
                 .post("/api/restaurants")
                 .then()
-                .statusCode(200)
+                .statusCode(201)
                 .extract()
                 .path("id");
 
@@ -238,7 +242,9 @@ public class RestaurantApiIntegrationTest {
                         "longitude": -87.6298
                     },
                     "capacity": 200,
-                    "availableMenus": 5
+                    "operatingHours": "09:00-23:00",
+                    "contactInfo": "987-654-3210",
+                    "description": "An updated restaurant"
                 }
                 """, newLocationId);
 
@@ -252,7 +258,6 @@ public class RestaurantApiIntegrationTest {
                 .body("id", equalTo(id))
                 .body("name", equalTo("Updated Restaurant"))
                 .body("capacity", equalTo(200))
-                .body("availableMenus", equalTo(5))
                 .body("location.id", equalTo(newLocationId));
     }
 
@@ -288,7 +293,9 @@ public class RestaurantApiIntegrationTest {
                         "longitude": -74.0060
                     },
                     "capacity": 100,
-                    "availableMenus": 3
+                    "operatingHours": "10:00-22:00",
+                    "contactInfo": "123-456-7890",
+                    "description": "A test restaurant for delete"
                 }
                 """, locationId);
 
@@ -298,7 +305,7 @@ public class RestaurantApiIntegrationTest {
                 .when()
                 .post("/api/restaurants")
                 .then()
-                .statusCode(200)
+                .statusCode(201)
                 .extract()
                 .path("id");
 

@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository;
 import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.WeatherData;
 
+/**
+ * JPA Repository for WeatherData entities
+ * This is explicitly not a Redis repository
+ */
 @Repository
 public interface WeatherDataRepository extends JpaRepository<WeatherData, Long> {
     

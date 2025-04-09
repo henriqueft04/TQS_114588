@@ -86,8 +86,10 @@ public class ReservationApiIntegrationTest {
                     "latitude": 40.7128,
                     "longitude": -74.0060
                 },
+                "description": "A test restaurant for API tests",
                 "capacity": 100,
-                "availableMenus": 10
+                "operatingHours": "Mon-Fri 9am-10pm",
+                "contactInfo": "test@example.com"
             }
             """, locationId);
 
@@ -97,7 +99,7 @@ public class ReservationApiIntegrationTest {
             .when()
             .post("/api/restaurants")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .path("id");
             
@@ -168,8 +170,10 @@ public class ReservationApiIntegrationTest {
                     "latitude": 40.7128,
                     "longitude": -74.0060
                 },
+                "description": "A test restaurant for get API tests",
                 "capacity": 100,
-                "availableMenus": 10
+                "operatingHours": "Mon-Fri 9am-10pm",
+                "contactInfo": "testget@example.com"
             }
             """, locationId);
 
@@ -179,7 +183,7 @@ public class ReservationApiIntegrationTest {
             .when()
             .post("/api/restaurants")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .path("id");
             
@@ -259,8 +263,10 @@ public class ReservationApiIntegrationTest {
                     "latitude": 40.7128,
                     "longitude": -74.0060
                 },
+                "description": "A test restaurant for update API tests",
                 "capacity": 100,
-                "availableMenus": 10
+                "operatingHours": "Mon-Fri 9am-10pm",
+                "contactInfo": "testupdate@example.com"
             }
             """, locationId);
 
@@ -270,7 +276,7 @@ public class ReservationApiIntegrationTest {
             .when()
             .post("/api/restaurants")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .path("id");
             
@@ -356,8 +362,10 @@ public class ReservationApiIntegrationTest {
                     "latitude": 40.7128,
                     "longitude": -74.0060
                 },
+                "description": "A test restaurant for delete API tests",
                 "capacity": 100,
-                "availableMenus": 10
+                "operatingHours": "Mon-Fri 9am-10pm",
+                "contactInfo": "testdelete@example.com"
             }
             """, locationId);
 
@@ -367,7 +375,7 @@ public class ReservationApiIntegrationTest {
             .when()
             .post("/api/restaurants")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .path("id");
             

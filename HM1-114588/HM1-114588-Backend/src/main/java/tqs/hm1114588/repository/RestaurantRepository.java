@@ -1,5 +1,6 @@
 package tqs.hm1114588.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
      * @return Restaurant if found
      */
     Optional<Restaurant> findByName(String name);
+
+    List<Restaurant> findByLocationId(Long locationId);
 } 

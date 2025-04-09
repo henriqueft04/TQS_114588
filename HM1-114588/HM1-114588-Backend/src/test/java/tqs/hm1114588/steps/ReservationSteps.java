@@ -18,8 +18,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.restaurant.Meal;
-import tqs.hm1114588.model.restaurant.MealType;
 import tqs.hm1114588.model.restaurant.Reservation;
 import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.model.restaurant.Restaurant;
@@ -42,19 +42,29 @@ public class ReservationSteps {
     private String token;
 
     @Given("the restaurant {string} exists with capacity {int}")
-    public void the_restaurant_exists_with_capacity(String name, Integer capacity) {
-        restaurant = restaurantService.createRestaurant(name, capacity);
+    public void the_restaurant_exists_with_capacity(String name, int capacity) {
+        Location location = new Location();
+        location.setName("Test Location");
+        location.setLatitude(40.7128);
+        location.setLongitude(-74.0060);
+        
+        restaurant = restaurantService.createRestaurant(
+            name, 
+            "A test restaurant", 
+            capacity, 
+            "10:00-22:00", 
+            "123456789", 
+            1L
+        );
     }
 
     @Given("the restaurant is open from {string} to {string}")
     public void the_restaurant_is_open_from_to(String openTime, String closeTime) {
         Meal dinner = new Meal();
-        dinner.setMealType(MealType.DINNER);
-        dinner.setDayOfWeek(java.time.DayOfWeek.of(java.time.LocalDate.now().getDayOfWeek().getValue()));
+        dinner.setMealType("DINNER");
         dinner.setStartTime(LocalTime.parse(openTime));
         dinner.setEndTime(LocalTime.parse(closeTime));
         dinner.setRestaurant(restaurant);
-        dinner.setActive(true);
         
         restaurant.addMeal(dinner);
         restaurantService.save(restaurant);

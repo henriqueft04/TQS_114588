@@ -48,7 +48,6 @@ class ReservationServiceTest {
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
-        restaurant.setAvailableMenus(40);
 
         reservation = new Reservation();
         reservation.setId(1L);

@@ -1,14 +1,10 @@
 package tqs.hm1114588.service;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +69,6 @@ class MenuServiceTest {
         menu.setId(1L);
         menu.setName("Test Menu");
         menu.setDescription("Test Description");
-        menu.setRestaurant(restaurant);
         menu.setIsAvailable(true);
         menu.addDish(dish1);
     }
@@ -107,153 +102,21 @@ class MenuServiceTest {
     }
 
     @Test
-    void testFindByRestaurantId() {
-        // Arrange
-        when(menuRepository.findByRestaurantId(1L)).thenReturn(Collections.singletonList(menu));
-
-        // Act
-        List<Menu> result = menuService.findByRestaurantId(1L);
-
-        // Assert
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getRestaurant().getId());
-        verify(menuRepository).findByRestaurantId(1L);
-    }
-    
-    @Test
-    void testFindAvailable() {
-        // Arrange
-        when(menuRepository.findByIsAvailableTrue()).thenReturn(Collections.singletonList(menu));
-
-        // Act
-        List<Menu> result = menuService.findAvailable();
-
-        // Assert
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).getIsAvailable());
-        verify(menuRepository).findByIsAvailableTrue();
-    }
-    
-    @Test
-    void testFindAvailableByRestaurant() {
-        // Arrange
-        when(menuRepository.findByRestaurantIdAndIsAvailableTrue(1L)).thenReturn(Collections.singletonList(menu));
-
-        // Act
-        List<Menu> result = menuService.findAvailableByRestaurant(1L);
-
-        // Assert
-        assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getRestaurant().getId());
-        assertTrue(result.get(0).getIsAvailable());
-        verify(menuRepository).findByRestaurantIdAndIsAvailableTrue(1L);
-    }
-    
-    @Test
     void testCreateMenu() {
         // Arrange
-        Set<Long> dishIds = new HashSet<>();
-        dishIds.add(1L);
-        dishIds.add(2L);
+        Menu newMenu = new Menu();
+        newMenu.setName("New Menu");
+        newMenu.setDescription("New Description");
+        newMenu.setIsAvailable(true);
         
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
-        when(dishRepository.findAllById(dishIds)).thenReturn(List.of(dish1, dish2));
-        when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
-            Menu savedMenu = invocation.getArgument(0);
-            savedMenu.setId(2L);
-            return savedMenu;
-        });
-
-        // Act
-        Menu result = menuService.createMenu(
-                1L, 
-                "New Menu", 
-                "New Description", 
-                dishIds
-        );
-
-        // Assert
-        assertEquals(2L, result.getId());
-        assertEquals("New Menu", result.getName());
-        assertEquals("New Description", result.getDescription());
-        assertEquals(restaurant, result.getRestaurant());
-        assertTrue(result.getIsAvailable());
-        verify(restaurantRepository).findById(1L);
-        verify(dishRepository).findAllById(dishIds);
-        verify(menuRepository, org.mockito.Mockito.times(2)).save(any(Menu.class));
-    }
-    
-    @Test
-    void testCreateMenu_RestaurantNotFound() {
-        // Arrange
-        Set<Long> dishIds = new HashSet<>();
-        dishIds.add(1L);
-        
-        when(restaurantRepository.findById(99L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            menuService.createMenu(
-                    99L, 
-                    "New Menu", 
-                    "New Description", 
-                    dishIds
-            );
-        });
-        
-        assertEquals("Restaurant not found", exception.getMessage());
-    }
-    
-    @Test
-    void testUpdateAvailability() {
-        // Arrange
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu));
         when(menuRepository.save(any(Menu.class))).thenReturn(menu);
 
         // Act
-        Optional<Menu> result = menuService.updateAvailability(1L, false);
+        Menu result = menuService.createMenu(1L, newMenu);
 
         // Assert
-        assertTrue(result.isPresent());
-        assertFalse(result.get().getIsAvailable());
-        verify(menuRepository).findById(1L);
-        verify(menuRepository).save(menu);
-    }
-    
-    @Test
-    void testAddDishToMenu() {
-        // Arrange
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu));
-        when(dishRepository.findById(2L)).thenReturn(Optional.of(dish2));
-        when(menuRepository.save(any(Menu.class))).thenReturn(menu);
-
-        // Act
-        Optional<Menu> result = menuService.addDishToMenu(1L, 2L);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(2, result.get().getDishes().size());
-        verify(menuRepository).findById(1L);
-        verify(dishRepository).findById(2L);
-        verify(menuRepository).save(menu);
-    }
-    
-    @Test
-    void testRemoveDishFromMenu() {
-        // Arrange
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu));
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(dish1));
-        when(menuRepository.save(any(Menu.class))).thenReturn(menu);
-
-        // Act
-        Optional<Menu> result = menuService.removeDishFromMenu(1L, 1L);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(0, result.get().getDishes().size());
-        verify(menuRepository).findById(1L);
-        verify(dishRepository).findById(1L);
-        verify(menuRepository).save(menu);
+        assertEquals(menu.getId(), result.getId());
+        verify(menuRepository).save(any(Menu.class));
     }
 
     @Test
@@ -267,5 +130,16 @@ class MenuServiceTest {
         // Assert
         assertEquals(menu.getId(), result.getId());
         verify(menuRepository).save(menu);
+    }
+    
+    @Test
+    void testDeleteById() {
+        // Arrange
+        
+        // Act
+        menuService.deleteById(1L);
+        
+        // Assert
+        verify(menuRepository).deleteById(1L);
     }
 } 

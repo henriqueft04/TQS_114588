@@ -1,17 +1,16 @@
 package tqs.hm1114588.model;
 
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import tqs.hm1114588.model.restaurant.Meal;
 import tqs.hm1114588.model.restaurant.Restaurant;
@@ -19,37 +18,32 @@ import tqs.hm1114588.model.restaurant.Restaurant;
 @Entity
 @Table(name = "schedules")
 public class Schedule {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Meal> meals;
+    
+    @OneToOne
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
-
-    @Column(nullable = false)
-    private String name; // e.g., "Regular Schedule", "Holiday Schedule"
-
-    @Column(nullable = false)
-    private boolean isActive;
-
-    @OneToMany(mappedBy = "schedule", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Meal> meals = new HashSet<>();
 
     // Default constructor
     public Schedule() {
-        this.isActive = true;
     }
 
-    // Helper methods for managing meals
-    public void addMeal(Meal meal) {
-        meals.add(meal);
-        meal.setSchedule(this);
-    }
-
-    public void removeMeal(Meal meal) {
-        meals.remove(meal);
-        meal.setSchedule(null);
+    // Constructor with fields
+    public Schedule(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     // Getters and Setters
@@ -61,28 +55,20 @@ public class Schedule {
         this.id = id;
     }
 
-    public Restaurant getRestaurant() {
-        return restaurant;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public String getName() {
-        return name;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public Set<Meal> getMeals() {
@@ -91,5 +77,13 @@ public class Schedule {
 
     public void setMeals(Set<Meal> meals) {
         this.meals = meals;
+    }
+    
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+    
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 } 

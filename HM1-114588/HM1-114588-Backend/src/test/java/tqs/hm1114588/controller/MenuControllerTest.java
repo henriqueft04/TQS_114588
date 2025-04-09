@@ -73,7 +73,6 @@ class MenuControllerTest {
         menu.setId(1L);
         menu.setName("Test Menu");
         menu.setDescription("Menu for tests");
-        menu.setRestaurant(restaurant);
         menu.setDishes(dishes);
     }
 
@@ -115,163 +114,29 @@ class MenuControllerTest {
     }
 
     @Test
-    void testGetMenusByRestaurant() throws Exception {
-        when(menuService.findByRestaurantId(1L)).thenReturn(Collections.singletonList(menu));
-
-        mockMvc.perform(get("/api/menus/restaurant/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("Test Menu")));
-                
-        verify(menuService).findByRestaurantId(1L);
-    }
-
-    @Test
-    void testGetAvailableMenus() throws Exception {
-        when(menuService.findAvailable()).thenReturn(Collections.singletonList(menu));
-
-        mockMvc.perform(get("/api/menus/available"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("Test Menu")));
-                
-        verify(menuService).findAvailable();
-    }
-
-    @Test
-    void testGetAvailableMenusByRestaurant() throws Exception {
-        when(menuService.findAvailableByRestaurant(1L)).thenReturn(Collections.singletonList(menu));
-
-        mockMvc.perform(get("/api/menus/restaurant/1/available"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("Test Menu")));
-                
-        verify(menuService).findAvailableByRestaurant(1L);
-    }
-
-    @Test
     void testCreateMenu_Success() throws Exception {
-        // Create request body
-        Map<String, Object> requestBody = Map.of(
-            "restaurantId", 1L,
-            "name", "New Menu",
-            "description", "A new test menu",
-            "dishIds", Arrays.asList(1, 2, 3)
-        );
-        
-        when(menuService.createMenu(
-            eq(1L), 
-            eq("New Menu"), 
-            eq("A new test menu"), 
-            any()
-        )).thenReturn(menu);
+        when(menuService.createMenu(anyLong(), any(Menu.class))).thenReturn(menu);
 
         mockMvc.perform(post("/api/menus")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBody)))
+                .content("{\"mealId\": 1, \"name\": \"New Menu\", \"description\": \"A new test menu\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Test Menu")));
                 
-        verify(menuService).createMenu(
-            eq(1L), 
-            eq("New Menu"), 
-            eq("A new test menu"), 
-            any()
-        );
+        verify(menuService).createMenu(anyLong(), any(Menu.class));
     }
     
     @Test
     void testCreateMenu_BadRequest() throws Exception {
-        // Create request body with invalid data
-        Map<String, Object> requestBody = Map.of(
-            "restaurantId", 1L,
-            "name", "New Menu",
-            "dishIds", Arrays.asList(1, 2, 3)
-        );
-        
-        when(menuService.createMenu(
-            any(), 
-            any(), 
-            any(), 
-            any()
-        )).thenThrow(new IllegalArgumentException("Invalid request"));
+        when(menuService.createMenu(anyLong(), any(Menu.class)))
+            .thenThrow(new IllegalArgumentException("Invalid request"));
 
         mockMvc.perform(post("/api/menus")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBody)))
+                .content("{\"mealId\": 1, \"name\": \"New Menu\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").exists());
-    }
-
-    @Test
-    void testUpdateAvailability() throws Exception {
-        when(menuService.updateAvailability(1L, true)).thenReturn(Optional.of(menu));
-
-        mockMvc.perform(put("/api/menus/1/availability")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"isAvailable\": true}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name", is("Test Menu")));
-                
-        verify(menuService).updateAvailability(1L, true);
-    }
-
-    @Test
-    void testAddDishToMenu_Success() throws Exception {
-        when(menuService.addDishToMenu(1L, 2L)).thenReturn(Optional.of(menu));
-
-        mockMvc.perform(put("/api/menus/1/dishes/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"dishId\": 2}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name", is("Test Menu")));
-                
-        verify(menuService).addDishToMenu(1L, 2L);
-    }
-
-    @Test
-    void testAddDishToMenu_NotFound() throws Exception {
-        when(menuService.addDishToMenu(99L, 2L)).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/api/menus/99/dishes/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"dishId\": 2}"))
-                .andExpect(status().isNotFound());
-                
-        verify(menuService).addDishToMenu(99L, 2L);
-    }
-
-    @Test
-    void testRemoveDishFromMenu_Success() throws Exception {
-        when(menuService.removeDishFromMenu(1L, 1L)).thenReturn(Optional.of(menu));
-
-        mockMvc.perform(put("/api/menus/1/dishes/remove")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"dishId\": 1}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.name", is("Test Menu")));
-                
-        verify(menuService).removeDishFromMenu(1L, 1L);
-    }
-
-    @Test
-    void testRemoveDishFromMenu_NotFound() throws Exception {
-        when(menuService.removeDishFromMenu(99L, 1L)).thenReturn(Optional.empty());
-
-        mockMvc.perform(put("/api/menus/99/dishes/remove")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"dishId\": 1}"))
-                .andExpect(status().isNotFound());
-                
-        verify(menuService).removeDishFromMenu(99L, 1L);
     }
 
     @Test

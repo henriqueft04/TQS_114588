@@ -3,9 +3,11 @@ package tqs.hm1114588.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +39,9 @@ public class RestaurantController {
      * @return List of restaurants
      */
     @GetMapping
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantService.findAll();
+    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantService.findAll();
+        return ResponseEntity.ok(restaurants);
     }
 
     /**
@@ -48,9 +51,8 @@ public class RestaurantController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Long id) {
-        return restaurantService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Restaurant> restaurant = restaurantService.findById(id);
+        return restaurant.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -151,13 +153,9 @@ public class RestaurantController {
      * @return Created restaurant
      */
     @PostMapping
-    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
-        // Save the location first if it exists
-        if (restaurant.getLocation() != null) {
-            Location savedLocation = locationService.save(restaurant.getLocation());
-            restaurant.setLocation(savedLocation);
-        }
-        return restaurantService.save(restaurant);
+    public ResponseEntity<Restaurant> createRestaurant(@RequestBody Restaurant restaurant) {
+        Restaurant savedRestaurant = restaurantService.save(restaurant);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedRestaurant);
     }
 
     /**
@@ -181,7 +179,6 @@ public class RestaurantController {
                     }
                     
                     existingRestaurant.setCapacity(restaurant.getCapacity());
-                    existingRestaurant.setAvailableMenus(restaurant.getAvailableMenus());
                     return restaurantService.save(existingRestaurant);
                 })
                 .map(ResponseEntity::ok)
@@ -195,11 +192,13 @@ public class RestaurantController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
-        return restaurantService.findById(id)
-                .map(restaurant -> {
-                    restaurantService.deleteById(id);
-                    return ResponseEntity.noContent().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        restaurantService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/location/{locationId}")
+    public ResponseEntity<List<Restaurant>> getRestaurantsByLocation(@PathVariable Long locationId) {
+        List<Restaurant> restaurants = restaurantService.findByLocationId(locationId);
+        return ResponseEntity.ok(restaurants);
     }
 } 

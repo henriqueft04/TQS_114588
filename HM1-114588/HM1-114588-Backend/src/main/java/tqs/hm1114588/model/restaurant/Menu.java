@@ -1,5 +1,6 @@
 package tqs.hm1114588.model.restaurant;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,12 +27,15 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column()
     private String description;
 
+    @Column()
+    private LocalDate date;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+    @JoinColumn(name = "meal_id")
+    private Meal meal;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -41,12 +45,19 @@ public class Menu {
     )
     private Set<Dish> dishes = new HashSet<>();
 
-
     @Column(nullable = false)
     private Boolean isAvailable;
 
     // Default constructor
     public Menu() {
+        this.isAvailable = true;
+    }
+
+    // Constructor with fields
+    public Menu(String name, String description, LocalDate date) {
+        this.name = name;
+        this.description = description;
+        this.date = date;
         this.isAvailable = true;
     }
 
@@ -75,12 +86,20 @@ public class Menu {
         this.description = description;
     }
 
-    public Restaurant getRestaurant() {
-        return restaurant;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Meal getMeal() {
+        return meal;
+    }
+
+    public void setMeal(Meal meal) {
+        this.meal = meal;
     }
 
     public Set<Dish> getDishes() {
@@ -90,7 +109,6 @@ public class Menu {
     public void setDishes(Set<Dish> dishes) {
         this.dishes = dishes;
     }
-
 
     public Boolean getIsAvailable() {
         return isAvailable;
