@@ -32,7 +32,7 @@ public class User {
     @Column(name = "role", nullable = false)
     private String role; // CUSTOMER, STAFF, ADMIN
 
-    @Column(nullable = true)
+    @Column()
     private String phone;
 
     @Column(nullable = false)

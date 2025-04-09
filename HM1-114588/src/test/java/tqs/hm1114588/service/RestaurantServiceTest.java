@@ -1,6 +1,7 @@
 package tqs.hm1114588.service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ class RestaurantServiceTest {
     @Test
     void testFindAll() {
         // Arrange
-        List<Restaurant> restaurants = Arrays.asList(restaurant);
+        List<Restaurant> restaurants = Collections.singletonList(restaurant);
         when(restaurantRepository.findAll()).thenReturn(restaurants);
 
         // Act

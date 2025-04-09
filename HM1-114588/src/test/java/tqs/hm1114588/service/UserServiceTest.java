@@ -1,6 +1,6 @@
 package tqs.hm1114588.service;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ class UserServiceTest {
     @Test
     void testFindAll() {
         // Arrange
-        List<User> users = Arrays.asList(user);
+        List<User> users = Collections.singletonList(user);
         when(userRepository.findAll()).thenReturn(users);
 
         // Act
@@ -102,7 +102,7 @@ class UserServiceTest {
     @Test
     void testFindByRole() {
         // Arrange
-        List<User> users = Arrays.asList(user);
+        List<User> users = Collections.singletonList(user);
         when(userRepository.findByRole("CUSTOMER")).thenReturn(users);
 
         // Act

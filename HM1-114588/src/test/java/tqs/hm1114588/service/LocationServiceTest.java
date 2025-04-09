@@ -1,6 +1,6 @@
 package tqs.hm1114588.service;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +47,7 @@ class LocationServiceTest {
     @Test
     void testFindAll() {
         // Arrange
-        List<Location> locations = Arrays.asList(location);
+        List<Location> locations = Collections.singletonList(location);
         when(locationRepository.findAll()).thenReturn(locations);
 
         // Act

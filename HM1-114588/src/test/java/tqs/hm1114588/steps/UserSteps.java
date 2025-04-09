@@ -66,11 +66,7 @@ public class UserSteps {
     public void i_search_for_a_user_with_email(String email) {
         try {
             Optional<User> result = userService.findByEmail(email);
-            if (result.isPresent()) {
-                user = result.get();
-            } else {
-                user = null;
-            }
+            user = result.orElse(null);
         } catch (Exception e) {
             exception = e;
         }
@@ -113,7 +109,7 @@ public class UserSteps {
     public void the_results_should_include_and(String name1, String name2) {
         List<String> names = userList.stream()
             .map(User::getName)
-            .collect(Collectors.toList());
+            .toList();
         assertTrue(names.contains(name1));
         assertTrue(names.contains(name2));
     }

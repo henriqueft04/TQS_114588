@@ -30,20 +30,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.WeatherData;
-import tqs.hm1114588.repository.LocationRepository;
-import tqs.hm1114588.repository.WeatherDataRepository;
 
 @ExtendWith(MockitoExtension.class)
 class WeatherAPIServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
-
-    @Mock
-    private LocationRepository locationRepository;
-
-    @Mock
-    private WeatherDataRepository weatherDataRepository;
 
     @Mock
     private ObjectMapper objectMapper;
@@ -112,7 +104,7 @@ class WeatherAPIServiceTest {
     }
 
     @Test
-    void testGetForecast_CacheHit() throws Exception {
+    void testGetForecast_CacheHit() {
         // Arrange
         when(weatherDataService.findByLocationAndDate(location, date))
             .thenReturn(Optional.of(weatherData));
@@ -165,7 +157,7 @@ class WeatherAPIServiceTest {
     }
 
     @Test
-    void testGetForecast_ApiError() throws Exception {
+    void testGetForecast_ApiError() {
         // Arrange
         when(weatherDataService.findByLocationAndDate(location, date))
             .thenReturn(Optional.empty());

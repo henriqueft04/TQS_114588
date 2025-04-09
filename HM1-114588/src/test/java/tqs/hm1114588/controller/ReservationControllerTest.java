@@ -1,33 +1,29 @@
 package tqs.hm1114588.controller;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -43,11 +39,10 @@ class ReservationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ReservationService reservationService;
 
     private Reservation reservation;
-    private Restaurant restaurant;
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -57,7 +52,7 @@ class ReservationControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         
         // Set up test data
-        restaurant = new Restaurant();
+        Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
@@ -79,7 +74,7 @@ class ReservationControllerTest {
     @Test
     void testGetAllReservations() throws Exception {
         // Arrange
-        when(reservationService.findAll()).thenReturn(Arrays.asList(reservation));
+        when(reservationService.findAll()).thenReturn(Collections.singletonList(reservation));
 
         // Act & Assert
         mockMvc.perform(get("/api/reservations"))
@@ -134,7 +129,7 @@ class ReservationControllerTest {
     @Test
     void testGetReservationsByRestaurant() throws Exception {
         // Arrange
-        when(reservationService.findByRestaurantId(1L)).thenReturn(Arrays.asList(reservation));
+        when(reservationService.findByRestaurantId(1L)).thenReturn(Collections.singletonList(reservation));
 
         // Act & Assert
         mockMvc.perform(get("/api/reservations/restaurant/1"))

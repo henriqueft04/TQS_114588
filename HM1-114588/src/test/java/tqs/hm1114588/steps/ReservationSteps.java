@@ -132,9 +132,7 @@ public class ReservationSteps {
     public void i_confirm_the_reservation_with_token(String token) {
         try {
             Optional<Reservation> result = reservationService.confirmReservation(Long.parseLong(token));
-            if (result.isPresent()) {
-                reservation = result.get();
-            }
+            result.ifPresent(value -> reservation = value);
         } catch (Exception e) {
             exception = e;
         }
@@ -226,9 +224,7 @@ public class ReservationSteps {
     public void the_customer_checks_in_with_token(String token) {
         try {
             Optional<Reservation> result = reservationService.checkInReservation(token);
-            if (result.isPresent()) {
-                reservation = result.get();
-            }
+            result.ifPresent(value -> reservation = value);
         } catch (Exception e) {
             exception = e;
         }

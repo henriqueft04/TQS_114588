@@ -25,8 +25,6 @@ public class WeatherAPIService {
     private String apiUrl;
 
     private final RestTemplate restTemplate;
-    private final LocationRepository locationRepository;
-    private final WeatherDataRepository weatherDataRepository;
     private final ObjectMapper objectMapper;
     private final WeatherDataService weatherDataService;
     
@@ -43,8 +41,6 @@ public class WeatherAPIService {
                            ObjectMapper objectMapper,
                            WeatherDataService weatherDataService) {
         this.restTemplate = restTemplate;
-        this.locationRepository = locationRepository;
-        this.weatherDataRepository = weatherDataRepository;
         this.objectMapper = objectMapper;
         this.weatherDataService = weatherDataService;
     }

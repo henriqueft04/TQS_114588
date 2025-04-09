@@ -16,14 +16,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +38,7 @@ class RestaurantControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private RestaurantService restaurantService;
 
     private Restaurant restaurant;
@@ -58,7 +59,7 @@ class RestaurantControllerTest {
     @Test
     void testGetAllRestaurants() throws Exception {
         // Arrange
-        when(restaurantService.findAll()).thenReturn(Arrays.asList(restaurant));
+        when(restaurantService.findAll()).thenReturn(Collections.singletonList(restaurant));
 
         // Act & Assert
         mockMvc.perform(get("/api/restaurants"))

@@ -106,7 +106,7 @@ public class RedisService {
     // Clear all caches
     public void clearAllCaches() {
         Set<String> keys = redisTemplate.keys("*");
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }

@@ -1,7 +1,7 @@
 package tqs.hm1114588.service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,7 +66,7 @@ class ReservationServiceTest {
     @Test
     void testFindAll() {
         // Arrange
-        List<Reservation> reservations = Arrays.asList(reservation);
+        List<Reservation> reservations = Collections.singletonList(reservation);
         when(reservationRepository.findAll()).thenReturn(reservations);
 
         // Act
@@ -122,7 +122,7 @@ class ReservationServiceTest {
     @Test
     void testFindByRestaurantId() {
         // Arrange
-        List<Reservation> reservations = Arrays.asList(reservation);
+        List<Reservation> reservations = Collections.singletonList(reservation);
         when(reservationRepository.findByRestaurantId(1L)).thenReturn(reservations);
 
         // Act

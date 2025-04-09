@@ -1,7 +1,7 @@
 package tqs.hm1114588.service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,12 +34,11 @@ class MenuServiceTest {
     private MenuService menuService;
 
     private Menu menu;
-    private Restaurant restaurant;
 
     @BeforeEach
     void setUp() {
         // Set up test data
-        restaurant = new Restaurant();
+        Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
@@ -57,7 +56,7 @@ class MenuServiceTest {
     @Test
     void testFindAll() {
         // Arrange
-        List<Menu> menus = Arrays.asList(menu);
+        List<Menu> menus = Collections.singletonList(menu);
         when(menuRepository.findAll()).thenReturn(menus);
 
         // Act
@@ -99,7 +98,7 @@ class MenuServiceTest {
     @Test
     void testFindByRestaurantId() {
         // Arrange
-        List<Menu> menus = Arrays.asList(menu);
+        List<Menu> menus = Collections.singletonList(menu);
         when(menuRepository.findByRestaurantId(1L)).thenReturn(menus);
 
         // Act

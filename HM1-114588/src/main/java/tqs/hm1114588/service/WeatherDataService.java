@@ -130,10 +130,9 @@ public class WeatherDataService {
      * @param id Weather data ID
      * @param temperature Temperature
      * @param humidity Humidity
-     * @param windSpeed Wind speed
-     * @param windDirection Wind direction
+     * @param windSpeedKm Wind speed
+     * @param windDirectionId Wind direction
      * @param precipitation Precipitation
-     * @param weatherCondition Weather condition
      * @return Updated weather data
      */
     @Transactional
