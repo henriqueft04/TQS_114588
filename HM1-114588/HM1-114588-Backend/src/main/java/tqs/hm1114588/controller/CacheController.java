@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tqs.hm1114588.service.OpenWeatherService;
 import tqs.hm1114588.service.RedisService;
-import tqs.hm1114588.service.WeatherAPIService;
 
 @RestController
 @RequestMapping("/api/cache")
@@ -23,7 +23,7 @@ public class CacheController {
     private RedisService redisService;
     
     @Autowired
-    private WeatherAPIService weatherAPIService;
+    private OpenWeatherService openWeatherService;
 
     /**
      * Get all cache keys
@@ -49,11 +49,11 @@ public class CacheController {
         stats.put("locationKeys", redisService.sMembers("location*").size());
         
         // Get weather API cache statistics
-        stats.put("weatherApiRequests", weatherAPIService.getTotalRequests());
-        stats.put("weatherApiHits", weatherAPIService.getCacheHits());
-        stats.put("weatherApiMisses", weatherAPIService.getCacheMisses());
-        stats.put("weatherApiHitRatio", weatherAPIService.getTotalRequests() > 0 ? 
-            (double) weatherAPIService.getCacheHits() / weatherAPIService.getTotalRequests() : 0);
+        stats.put("weatherApiRequests", openWeatherService.getTotalRequests());
+        stats.put("weatherApiHits", openWeatherService.getCacheHits());
+        stats.put("weatherApiMisses", openWeatherService.getCacheMisses());
+        stats.put("weatherApiHitRatio", openWeatherService.getTotalRequests() > 0 ? 
+            (double) openWeatherService.getCacheHits() / openWeatherService.getTotalRequests() : 0);
         
         return ResponseEntity.ok(stats);
     }
@@ -65,7 +65,7 @@ public class CacheController {
     @DeleteMapping
     public ResponseEntity<Map<String, String>> clearAllCaches() {
         redisService.clearAllCaches();
-        weatherAPIService.resetCacheStatistics();
+        openWeatherService.resetCacheStatistics();
         
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -88,7 +88,7 @@ public class CacheController {
         
         // Reset weather API cache statistics if clearing weather cache
         if (cacheName.equals("weather")) {
-            weatherAPIService.resetCacheStatistics();
+            openWeatherService.resetCacheStatistics();
         }
         
         Map<String, String> response = new HashMap<>();

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tqs.hm1114588.model.WeatherData;
 import tqs.hm1114588.service.LocationService;
-import tqs.hm1114588.service.WeatherAPIService;
+import tqs.hm1114588.service.OpenWeatherService;
 import tqs.hm1114588.service.WeatherDataService;
 
 @RestController
@@ -25,7 +25,7 @@ import tqs.hm1114588.service.WeatherDataService;
 public class WeatherController {
 
     @Autowired
-    private WeatherAPIService weatherAPIService;
+    private OpenWeatherService openWeatherService;
 
     @Autowired
     private WeatherDataService weatherDataService;
@@ -45,7 +45,7 @@ public class WeatherController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         
         return locationService.findById(locationId)
-                .map(location -> weatherAPIService.getForecast(location, date)
+                .map(location -> openWeatherService.getForecast(location, date)
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build()))
                 .orElse(ResponseEntity.notFound().build());

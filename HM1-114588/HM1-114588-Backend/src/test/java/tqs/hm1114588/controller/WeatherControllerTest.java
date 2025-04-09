@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import tqs.hm1114588.model.Location;
 import tqs.hm1114588.model.WeatherData;
 import tqs.hm1114588.service.LocationService;
-import tqs.hm1114588.service.WeatherAPIService;
+import tqs.hm1114588.service.OpenWeatherService;
 import tqs.hm1114588.service.WeatherDataService;
 
 @WebMvcTest(WeatherController.class)
@@ -43,7 +43,7 @@ class WeatherControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private WeatherAPIService weatherAPIService;
+    private OpenWeatherService openWeatherService;
 
     @MockBean
     private WeatherDataService weatherDataService;
@@ -91,7 +91,7 @@ class WeatherControllerTest {
     void testGetForecast_WhenLocationAndForecastExist() throws Exception {
         // Arrange
         when(locationService.findById(1L)).thenReturn(Optional.of(location));
-        when(weatherAPIService.getForecast(location, testDate)).thenReturn(Optional.of(weatherData));
+        when(openWeatherService.getForecast(location, testDate)).thenReturn(Optional.of(weatherData));
 
         // Act & Assert
         mockMvc.perform(get("/api/weather/forecast")
@@ -103,7 +103,7 @@ class WeatherControllerTest {
                 .andExpect(jsonPath("$.humidity", is(65.0)));
         
         verify(locationService).findById(1L);
-        verify(weatherAPIService).getForecast(location, testDate);
+        verify(openWeatherService).getForecast(location, testDate);
     }
 
     @Test
@@ -124,7 +124,7 @@ class WeatherControllerTest {
     void testGetForecast_WhenForecastNotFound() throws Exception {
         // Arrange
         when(locationService.findById(1L)).thenReturn(Optional.of(location));
-        when(weatherAPIService.getForecast(location, testDate)).thenReturn(Optional.empty());
+        when(openWeatherService.getForecast(location, testDate)).thenReturn(Optional.empty());
 
         // Act & Assert
         mockMvc.perform(get("/api/weather/forecast")
@@ -133,7 +133,7 @@ class WeatherControllerTest {
                 .andExpect(status().isNotFound());
         
         verify(locationService).findById(1L);
-        verify(weatherAPIService).getForecast(location, testDate);
+        verify(openWeatherService).getForecast(location, testDate);
     }
 
     @Test

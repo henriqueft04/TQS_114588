@@ -20,9 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
 
+import tqs.hm1114588.service.OpenWeatherService;
 import tqs.hm1114588.service.RedisService;
-import tqs.hm1114588.service.WeatherAPIService;
 
 @WebMvcTest(CacheController.class)
 class CacheControllerTest {
@@ -34,7 +35,7 @@ class CacheControllerTest {
     private RedisService redisService;
 
     @MockBean
-    private WeatherAPIService weatherAPIService;
+    private OpenWeatherService openWeatherService;
 
     private Set<Object> cacheKeys;
 
@@ -52,9 +53,13 @@ class CacheControllerTest {
         when(redisService.sMembers("*")).thenReturn(cacheKeys);
 
         // Act & Assert
-        mockMvc.perform(get("/api/cache/keys"))
+        mockMvc.perform(get("/api/cache/keys")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.length()", is(3)))
+                .andExpect(jsonPath("$[0]").exists())
+                .andExpect(jsonPath("$[1]").exists())
+                .andExpect(jsonPath("$[2]").exists());
         
         verify(redisService).sMembers("*");
     }
@@ -66,12 +71,13 @@ class CacheControllerTest {
         when(redisService.sMembers("weatherData*")).thenReturn(Set.of("weatherData::1", "weatherData::2"));
         when(redisService.sMembers("location*")).thenReturn(Set.of("location::1"));
         
-        when(weatherAPIService.getTotalRequests()).thenReturn(100L);
-        when(weatherAPIService.getCacheHits()).thenReturn(80L);
-        when(weatherAPIService.getCacheMisses()).thenReturn(20L);
+        when(openWeatherService.getTotalRequests()).thenReturn(100L);
+        when(openWeatherService.getCacheHits()).thenReturn(80L);
+        when(openWeatherService.getCacheMisses()).thenReturn(20L);
 
         // Act & Assert
-        mockMvc.perform(get("/api/cache/stats"))
+        mockMvc.perform(get("/api/cache/stats")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalKeys", is(3)))
                 .andExpect(jsonPath("$.weatherDataKeys", is(2)))
@@ -84,25 +90,26 @@ class CacheControllerTest {
         verify(redisService).sMembers("*");
         verify(redisService).sMembers("weatherData*");
         verify(redisService).sMembers("location*");
-        verify(weatherAPIService, times(3)).getTotalRequests();
-        verify(weatherAPIService, times(2)).getCacheHits();
-        verify(weatherAPIService, times(1)).getCacheMisses();
+        verify(openWeatherService, times(3)).getTotalRequests();
+        verify(openWeatherService, times(2)).getCacheHits();
+        verify(openWeatherService, times(1)).getCacheMisses();
     }
 
     @Test
     void testClearAllCaches() throws Exception {
         // Arrange
         doNothing().when(redisService).clearAllCaches();
-        doNothing().when(weatherAPIService).resetCacheStatistics();
+        doNothing().when(openWeatherService).resetCacheStatistics();
 
         // Act & Assert
-        mockMvc.perform(delete("/api/cache"))
+        mockMvc.perform(delete("/api/cache")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("success")))
                 .andExpect(jsonPath("$.message", is("All caches cleared successfully")));
         
         verify(redisService).clearAllCaches();
-        verify(weatherAPIService).resetCacheStatistics();
+        verify(openWeatherService).resetCacheStatistics();
     }
 
     @Test
@@ -111,10 +118,11 @@ class CacheControllerTest {
         Set<Object> weatherKeys = Set.of("weather::1", "weather::2");
         when(redisService.sMembers("weather*")).thenReturn(weatherKeys);
         when(redisService.delete(anyString())).thenReturn(true);
-        doNothing().when(weatherAPIService).resetCacheStatistics();
+        doNothing().when(openWeatherService).resetCacheStatistics();
 
         // Act & Assert
-        mockMvc.perform(delete("/api/cache/weather"))
+        mockMvc.perform(delete("/api/cache/weather")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("success")))
                 .andExpect(jsonPath("$.message", is("Cache 'weather' cleared successfully")));
@@ -122,7 +130,7 @@ class CacheControllerTest {
         verify(redisService).sMembers("weather*");
         verify(redisService).delete("weather::1");
         verify(redisService).delete("weather::2");
-        verify(weatherAPIService).resetCacheStatistics();
+        verify(openWeatherService).resetCacheStatistics();
     }
 
     @Test
@@ -133,7 +141,8 @@ class CacheControllerTest {
         when(redisService.delete(anyString())).thenReturn(true);
 
         // Act & Assert
-        mockMvc.perform(delete("/api/cache/location"))
+        mockMvc.perform(delete("/api/cache/location")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("success")))
                 .andExpect(jsonPath("$.message", is("Cache 'location' cleared successfully")));
