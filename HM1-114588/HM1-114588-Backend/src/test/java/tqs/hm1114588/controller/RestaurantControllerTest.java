@@ -1,31 +1,30 @@
 package tqs.hm1114588.controller;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -193,5 +192,178 @@ class RestaurantControllerTest {
         
         verify(restaurantService).findById(99L);
         verify(restaurantService, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void testGetAvailableCapacity() throws Exception {
+        when(restaurantService.getAvailableCapacity(
+            eq(1L), 
+            any(), 
+            any()
+        )).thenReturn(30);
+
+        mockMvc.perform(get("/api/restaurants/1/available-capacity")
+                .param("startTime", "2025-04-10T18:00:00")
+                .param("endTime", "2025-04-10T20:00:00"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(30)));
+        
+        verify(restaurantService).getAvailableCapacity(eq(1L), any(), any());
+    }
+    
+    @Test
+    void testGetAvailableCapacity_NotFound() throws Exception {
+        when(restaurantService.getAvailableCapacity(
+            eq(99L), 
+            any(), 
+            any()
+        )).thenThrow(new IllegalArgumentException("Restaurant not found"));
+
+        mockMvc.perform(get("/api/restaurants/99/available-capacity")
+                .param("startTime", "2025-04-10T18:00:00")
+                .param("endTime", "2025-04-10T20:00:00"))
+                .andExpect(status().isNotFound());
+        
+        verify(restaurantService).getAvailableCapacity(eq(99L), any(), any());
+    }
+    
+    @Test
+    void testCheckCapacity_HasCapacity() throws Exception {
+        when(restaurantService.hasCapacityForReservation(
+            eq(1L), 
+            any(), 
+            eq(4)
+        )).thenReturn(true);
+
+        String requestBody = """
+            {
+                "reservationTime": "2025-04-10T18:00:00",
+                "partySize": 4
+            }
+            """;
+
+        mockMvc.perform(post("/api/restaurants/1/check-capacity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.hasCapacity", is(true)));
+        
+        verify(restaurantService).hasCapacityForReservation(eq(1L), any(), eq(4));
+    }
+    
+    @Test
+    void testCheckCapacity_NoCapacity() throws Exception {
+        when(restaurantService.hasCapacityForReservation(
+            eq(1L), 
+            any(), 
+            eq(10)
+        )).thenReturn(false);
+
+        String requestBody = """
+            {
+                "reservationTime": "2025-04-10T18:00:00",
+                "partySize": 10
+            }
+            """;
+
+        mockMvc.perform(post("/api/restaurants/1/check-capacity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.hasCapacity", is(false)));
+        
+        verify(restaurantService).hasCapacityForReservation(eq(1L), any(), eq(10));
+    }
+    
+    @Test
+    void testCheckCapacity_BadRequest() throws Exception {
+        String requestBody = """
+            {
+                "reservationTime": "invalid-date",
+                "partySize": 4
+            }
+            """;
+
+        mockMvc.perform(post("/api/restaurants/1/check-capacity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").exists());
+    }
+    
+    @Test
+    void testUpdateCapacity_Success() throws Exception {
+        when(restaurantService.updateCapacity(1L, 100)).thenReturn(Optional.of(restaurant));
+
+        String requestBody = """
+            {
+                "capacity": 100
+            }
+            """;
+
+        mockMvc.perform(put("/api/restaurants/1/capacity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Test Restaurant")));
+        
+        verify(restaurantService).updateCapacity(1L, 100);
+    }
+    
+    @Test
+    void testUpdateCapacity_NotFound() throws Exception {
+        when(restaurantService.updateCapacity(99L, 100)).thenReturn(Optional.empty());
+
+        String requestBody = """
+            {
+                "capacity": 100
+            }
+            """;
+
+        mockMvc.perform(put("/api/restaurants/99/capacity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isNotFound());
+        
+        verify(restaurantService).updateCapacity(99L, 100);
+    }
+    
+    @Test
+    void testUpdateAvailableMenus_Success() throws Exception {
+        when(restaurantService.updateAvailableMenus(1L, 30)).thenReturn(Optional.of(restaurant));
+
+        String requestBody = """
+            {
+                "availableMenus": 30
+            }
+            """;
+
+        mockMvc.perform(put("/api/restaurants/1/menus")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Test Restaurant")));
+        
+        verify(restaurantService).updateAvailableMenus(1L, 30);
+    }
+    
+    @Test
+    void testUpdateAvailableMenus_NotFound() throws Exception {
+        when(restaurantService.updateAvailableMenus(99L, 30)).thenReturn(Optional.empty());
+
+        String requestBody = """
+            {
+                "availableMenus": 30
+            }
+            """;
+
+        mockMvc.perform(put("/api/restaurants/99/menus")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isNotFound());
+        
+        verify(restaurantService).updateAvailableMenus(99L, 30);
     }
 } 
