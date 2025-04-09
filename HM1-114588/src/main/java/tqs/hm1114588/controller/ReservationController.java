@@ -87,7 +87,8 @@ public class ReservationController {
      * @param reservation Reservation data
      * @return Created reservation
      */
-    @PostMapping
+    @PostMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @org.springframework.web.bind.annotation.ResponseBody
     public Reservation createReservation(@RequestBody Reservation reservation) {
         return reservationService.createReservation(
                 reservation.getRestaurant().getId(),
