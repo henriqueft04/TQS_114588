@@ -240,7 +240,7 @@ class ReservationServiceTest {
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
 
         // Act
-        Optional<Reservation> result = reservationService.checkInReservation("test-token-123");
+        Optional<Reservation> result = reservationService.checkInReservation(123L);
 
         // Assert
         assertTrue(result.isPresent());
@@ -255,7 +255,7 @@ class ReservationServiceTest {
         when(reservationRepository.findByToken("test-token-123")).thenReturn(Optional.of(reservation));
 
         // Act
-        Optional<Reservation> result = reservationService.checkInReservation("test-token-123");
+        Optional<Reservation> result = reservationService.checkInReservation(123L);
 
         // Assert
         assertTrue(result.isPresent());

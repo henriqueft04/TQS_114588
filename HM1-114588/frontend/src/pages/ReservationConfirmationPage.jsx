@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import RestaurantApi from '../api/RestaurantApi';
 
 const ReservationConfirmationPage = () => {
   const { id } = useParams();
   const [reservation, setReservation] = useState(null);
-  const [restaurant, setRestaurant] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -13,48 +14,47 @@ const ReservationConfirmationPage = () => {
         const response = await RestaurantApi.getReservation(id);
         setReservation(response.data);
       } catch (error) {
-        console.error(`Failed to fetch reservation with ID ${id}:`, error);
-      }
-    };
-
-    const fetchRestaurant = async () => {
-      try {
-        const response = await RestaurantApi.getById(reservation.restaurantId);
-        setRestaurant(response.data);
-      } catch (error) {
-        console.error(`Failed to fetch restaurant with ID ${reservation.restaurantId}:`, error);
+        setError('Failed to load reservation');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchReservation();
-    
-    if (reservation) {
-      fetchRestaurant();
-    }
-  }, [id, reservation]);
+  }, [id]);
 
-  if (!reservation) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div className="alert alert-error">{error}</div>;
+  }
+
   return (
-    <div className="container mx-auto">
-      <h1 className="text-4xl font-bold mb-8">Reservation Confirmed!</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Reservation Confirmation</h1>
       
-      <div className="mb-8">
-        <p>Your reservation is confirmed with the following details:</p>
-        
-        <ul className="list-disc list-inside">
-          <li>Restaurant: {restaurant?.name}</li>
+      <p className="mb-4">
+        Thank you for your reservation at {reservation.restaurant.name}!
+      </p>
+      
+      <div className="mb-4">
+        <strong>Reservation Details:</strong>
+        <ul>
           <li>Date: {new Date(reservation.reservationTime).toLocaleDateString()}</li>
-          <li>Time: {new Date(reservation.reservationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</li>
+          <li>Time: {new Date(reservation.reservationTime).toLocaleTimeString()}</li>
           <li>Party Size: {reservation.partySize}</li>
-          <li>Name: {reservation.name}</li>
-          <li>Email: {reservation.email}</li>
         </ul>
       </div>
       
-      <p>You can view and manage your reservations from your <Link to="/profile" className="link">profile page</Link>.</p>
+      <div className="mb-4">
+        <strong>Ticket Code:</strong> {reservation.token}
+      </div>
+      
+      <p>
+        Please present this ticket code upon arrival at the restaurant to check in for your reservation.
+      </p>
     </div>
   );
 };

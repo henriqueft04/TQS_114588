@@ -157,12 +157,12 @@ public class ReservationController {
 
     /**
      * Check-in a reservation
-     * @param token Reservation token
+     * @param id Reservation ID
      * @return Updated reservation if found
      */
-    @PutMapping("/check-in/{token}")
-    public ResponseEntity<Reservation> checkInReservation(@PathVariable String token) {
-        return reservationService.checkInReservation(token)
+    @PutMapping("/{id}/checkin")
+    public ResponseEntity<Reservation> checkInReservation(@PathVariable Long id) {
+        return reservationService.checkInReservation(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

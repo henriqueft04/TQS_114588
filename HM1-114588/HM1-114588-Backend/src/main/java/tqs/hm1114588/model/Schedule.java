@@ -3,6 +3,8 @@ package tqs.hm1114588.model;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,9 +31,11 @@ public class Schedule {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Meal> meals;
     
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;

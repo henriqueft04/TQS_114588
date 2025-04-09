@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -20,6 +22,8 @@ import tqs.hm1114588.repository.RestaurantRepository;
 
 @Service
 public class ReservationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -148,6 +152,8 @@ public class ReservationService {
         reservation.setToken(UUID.randomUUID().toString());
         reservation.setStatus(ReservationStatus.PENDING);
         
+        logger.info("Created reservation: {}", reservation);
+        
         return reservationRepository.save(reservation);
     }
 
@@ -163,6 +169,7 @@ public class ReservationService {
         return reservationRepository.findById(id)
                 .map(reservation -> {
                     reservation.setStatus(ReservationStatus.CANCELLED);
+                    logger.info("Cancelled reservation: {}", reservation);
                     return reservationRepository.save(reservation);
                 });
     }
@@ -200,20 +207,19 @@ public class ReservationService {
 
     /**
      * Check-in a reservation
-     * @param token Reservation token
+     * @param id Reservation ID
      * @return Updated reservation if found
      */
     @Transactional
-    @CachePut(value = "reservation", key = "#result.id")
-    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
-    public Optional<Reservation> checkInReservation(String token) {
-        return reservationRepository.findByToken(token)
+    @CachePut(value = "reservation", key = "#id")
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    public Optional<Reservation> checkInReservation(Long id) {
+        return reservationRepository.findById(id)
+                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
                 .map(reservation -> {
-                    if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
-                        reservation.setStatus(ReservationStatus.CHECKED_IN);
-                        return reservationRepository.save(reservation);
-                    }
-                    return reservation;
+                    reservation.setStatus(ReservationStatus.CHECKED_IN);
+                    logger.info("Checked in reservation: {}", reservation);
+                    return reservationRepository.save(reservation);
                 });
     }
 

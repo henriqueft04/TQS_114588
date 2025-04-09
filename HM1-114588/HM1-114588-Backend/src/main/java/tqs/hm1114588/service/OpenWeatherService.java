@@ -7,6 +7,8 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +21,8 @@ import tqs.hm1114588.model.openweather.OpenWeatherResponse;
 
 @Service
 public class OpenWeatherService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OpenWeatherService.class);
 
     @Value("${openweather.api.url}")
     private String apiUrl;
@@ -52,13 +56,16 @@ public class OpenWeatherService {
         Optional<WeatherData> cachedData = weatherDataService.findByLocationAndDate(location, date);
         if (cachedData.isPresent()) {
             cacheHits.incrementAndGet();
+            logger.debug("Cache hit for location {} and date {}", location, date);
             return cachedData;
         }
         
         cacheMisses.incrementAndGet();
+        logger.debug("Cache miss for location {} and date {}", location, date);
         
         try {
             String url = buildApiUrl(location);
+            logger.debug("Calling OpenWeatherMap API: {}", url);
             OpenWeatherResponse response = restTemplate.getForObject(url, OpenWeatherResponse.class);
             
             if (response != null) {
@@ -72,11 +79,7 @@ public class OpenWeatherService {
             }
             return Optional.empty();
         } catch (Exception e) {
-            // Log the error with details
-            System.err.println("Error fetching weather forecast: " + e.getMessage());
-            System.err.println("Location: " + location.getName() + " (lat: " + location.getLatitude() + ", lon: " + location.getLongitude() + ")");
-            System.err.println("Date: " + date);
-            e.printStackTrace();
+            logger.error("Error fetching weather forecast", e);
             throw new RuntimeException("Failed to fetch weather forecast", e);
         }
     }

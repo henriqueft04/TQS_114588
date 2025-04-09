@@ -233,7 +233,7 @@ public class ReservationSteps {
     @When("the customer checks in with token {string}")
     public void the_customer_checks_in_with_token(String token) {
         try {
-            Optional<Reservation> result = reservationService.checkInReservation(token);
+            Optional<Reservation> result = reservationService.checkInReservation(Long.parseLong(token));
             result.ifPresent(value -> reservation = value);
         } catch (Exception e) {
             exception = e;

@@ -2,6 +2,7 @@ package tqs.hm1114588.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -115,5 +116,18 @@ public class WeatherController {
                     return ResponseEntity.noContent().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Get weather cache statistics
+     * @return Cache statistics
+     */
+    @GetMapping("/cache-stats")
+    public ResponseEntity<Object> getCacheStats() {
+        return ResponseEntity.ok(Map.of(
+            "totalRequests", openWeatherService.getTotalRequests(),
+            "cacheHits", openWeatherService.getCacheHits(),
+            "cacheMisses", openWeatherService.getCacheMisses()
+        ));
     }
 } 

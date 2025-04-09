@@ -76,7 +76,7 @@ const ReservationModal = ({ restaurant, isOpen, onClose }) => {
         onClose();
         navigate(`/reservations/${capacityResponse.data.reservationId}`);
       } else {
-        setError('Sorry, the restaurant is fully booked for the selected time.');
+        setError('Sorry, the selected time slot is fully booked. Please choose a different time.');
       }
     } catch (error) {
       console.error('Failed to make reservation:', error);

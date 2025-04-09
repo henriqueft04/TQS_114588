@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,6 +34,7 @@ public class Dish {
     @Column(nullable = false)
     private DishType type;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "dishes")
     private Set<Menu> menus = new HashSet<>();
 
