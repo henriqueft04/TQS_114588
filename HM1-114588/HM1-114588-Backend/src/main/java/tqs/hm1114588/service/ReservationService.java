@@ -16,12 +16,16 @@ import tqs.hm1114588.model.restaurant.Reservation;
 import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.model.restaurant.Restaurant;
 import tqs.hm1114588.repository.ReservationRepository;
+import tqs.hm1114588.repository.RestaurantRepository;
 
 @Service
 public class ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     @Autowired
     private RestaurantService restaurantService;

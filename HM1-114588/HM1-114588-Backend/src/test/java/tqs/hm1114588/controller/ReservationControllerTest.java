@@ -31,7 +31,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import tqs.hm1114588.model.restaurant.Reservation;
 import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.model.restaurant.Restaurant;
+import tqs.hm1114588.service.LocationService;
 import tqs.hm1114588.service.ReservationService;
+import tqs.hm1114588.service.RestaurantService;
 
 @WebMvcTest(ReservationController.class)
 class ReservationControllerTest {
@@ -41,6 +43,12 @@ class ReservationControllerTest {
 
     @MockitoBean
     private ReservationService reservationService;
+    
+    @MockitoBean
+    private RestaurantService restaurantService;
+    
+    @MockitoBean
+    private LocationService locationService;
 
     private Reservation reservation;
     private ObjectMapper objectMapper;
@@ -51,13 +59,22 @@ class ReservationControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         
+        // Set up location
+        tqs.hm1114588.model.Location location = new tqs.hm1114588.model.Location();
+        location.setId(1L);
+        location.setName("Test Location");
+        location.setLatitude(40.7128);
+        location.setLongitude(-74.0060);
+        
         // Set up test data
         Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
         restaurant.setAvailableMenus(40);
+        restaurant.setLocation(location);
 
+        // Set up reservation
         reservation = new Reservation();
         reservation.setId(1L);
         reservation.setRestaurant(restaurant);
@@ -69,6 +86,10 @@ class ReservationControllerTest {
         reservation.setMealType("Dinner");
         reservation.setStatus(ReservationStatus.PENDING);
         reservation.setToken("test-token-123");
+        
+        // Set up mocks
+        when(locationService.findById(any())).thenReturn(Optional.of(location));
+        when(restaurantService.findById(any())).thenReturn(Optional.of(restaurant));
     }
 
     @Test
@@ -129,7 +150,12 @@ class ReservationControllerTest {
     @Test
     void testGetReservationsByRestaurant() throws Exception {
         // Arrange
-        when(reservationService.findByRestaurantId(1L)).thenReturn(Collections.singletonList(reservation));
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(1L);
+        reservation.setRestaurant(restaurant);
+        
+        when(reservationService.findByRestaurantId(1L))
+                .thenReturn(Collections.singletonList(reservation));
 
         // Act & Assert
         mockMvc.perform(get("/api/reservations/restaurant/1"))
@@ -144,6 +170,20 @@ class ReservationControllerTest {
     @Test
     void testCreateReservation() throws Exception {
         // Arrange
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(1L);
+        
+        Reservation requestReservation = new Reservation();
+        requestReservation.setRestaurant(restaurant);
+        requestReservation.setCustomerName("John Doe");
+        requestReservation.setCustomerEmail("john@example.com");
+        requestReservation.setCustomerPhone("1234567890");
+        requestReservation.setPartySize(4);
+        requestReservation.setReservationTime(LocalDateTime.now().plusDays(1));
+        requestReservation.setMealType("Dinner");
+        requestReservation.setIsGroupReservation(false);
+        requestReservation.setMenusRequired(4);
+
         when(reservationService.createReservation(
                 eq(1L),
                 eq("John Doe"),
@@ -152,16 +192,19 @@ class ReservationControllerTest {
                 eq(4),
                 any(LocalDateTime.class),
                 eq("Dinner"),
-                eq(null),  // specialRequests is null in our test setup
-                eq(false), // isGroupReservation is false in our test setup
-                eq(4)      // menusRequired is 4 in our test setup
+                eq(null),
+                eq(false),
+                eq(4)
         )).thenReturn(reservation);
 
         // Act & Assert
         mockMvc.perform(post("/api/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(reservation)))
-                .andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(requestReservation)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.customerName", is("John Doe")))
+                .andExpect(jsonPath("$.restaurant.id", is(1)));
 
         verify(reservationService).createReservation(
                 eq(1L),
@@ -171,9 +214,9 @@ class ReservationControllerTest {
                 eq(4),
                 any(LocalDateTime.class),
                 eq("Dinner"),
-                eq(null),  // specialRequests is null in our test setup
-                eq(false), // isGroupReservation is false in our test setup
-                eq(4)      // menusRequired is 4 in our test setup
+                eq(null),
+                eq(false),
+                eq(4)
         );
     }
 

@@ -70,11 +70,15 @@ public class OpenWeatherService {
                         location, dailyForecast.get(), date));
                 }
             }
+            return Optional.empty();
         } catch (Exception e) {
-            // Log error and return empty
+            // Log the error with details
+            System.err.println("Error fetching weather forecast: " + e.getMessage());
+            System.err.println("Location: " + location.getName() + " (lat: " + location.getLatitude() + ", lon: " + location.getLongitude() + ")");
+            System.err.println("Date: " + date);
+            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch weather forecast", e);
         }
-
-        return Optional.empty();
     }
     
     /**

@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tqs.hm1114588.model.restaurant.Restaurant;
+import tqs.hm1114588.service.LocationService;
 import tqs.hm1114588.service.RestaurantService;
 
 @WebMvcTest(RestaurantController.class)
@@ -39,6 +40,9 @@ class RestaurantControllerTest {
 
     @MockitoBean
     private RestaurantService restaurantService;
+    
+    @MockitoBean
+    private LocationService locationService;
 
     private Restaurant restaurant;
     private ObjectMapper objectMapper;
@@ -53,6 +57,18 @@ class RestaurantControllerTest {
         restaurant.setName("Test Restaurant");
         restaurant.setCapacity(50);
         restaurant.setAvailableMenus(40);
+        
+        // Create and set a location since it's required by the model
+        tqs.hm1114588.model.Location location = new tqs.hm1114588.model.Location();
+        location.setId(1L);
+        location.setName("Test Location");
+        location.setLatitude(40.7128);
+        location.setLongitude(-74.0060);
+        restaurant.setLocation(location);
+
+        // Mock location service
+        when(locationService.findById(anyLong())).thenReturn(Optional.of(location));
+        when(locationService.save(any(tqs.hm1114588.model.Location.class))).thenReturn(location);
     }
 
     @Test

@@ -41,21 +41,42 @@ public class CacheController {
      */
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getCacheStatistics() {
-        Map<String, Object> stats = new HashMap<>();
-        
-        // Get general cache statistics
-        stats.put("totalKeys", redisService.sMembers("*").size());
-        stats.put("weatherDataKeys", redisService.sMembers("weatherData*").size());
-        stats.put("locationKeys", redisService.sMembers("location*").size());
-        
-        // Get weather API cache statistics
-        stats.put("weatherApiRequests", openWeatherService.getTotalRequests());
-        stats.put("weatherApiHits", openWeatherService.getCacheHits());
-        stats.put("weatherApiMisses", openWeatherService.getCacheMisses());
-        stats.put("weatherApiHitRatio", openWeatherService.getTotalRequests() > 0 ? 
-            (double) openWeatherService.getCacheHits() / openWeatherService.getTotalRequests() : 0);
-        
-        return ResponseEntity.ok(stats);
+        try {
+            Map<String, Object> stats = new HashMap<>();
+            
+            // Get general cache statistics
+            stats.put("totalKeys", redisService.sMembers("*").size());
+            stats.put("weatherDataKeys", redisService.sMembers("weatherData*").size());
+            stats.put("locationKeys", redisService.sMembers("location*").size());
+            
+            // Get weather API cache statistics
+            stats.put("weatherApiRequests", openWeatherService.getTotalRequests());
+            stats.put("weatherApiHits", openWeatherService.getCacheHits());
+            stats.put("weatherApiMisses", openWeatherService.getCacheMisses());
+            
+            // Calculate hit ratio (avoid division by zero)
+            double hitRatio = 0;
+            if (openWeatherService.getTotalRequests() > 0) {
+                hitRatio = (double) openWeatherService.getCacheHits() / openWeatherService.getTotalRequests();
+            }
+            stats.put("weatherApiHitRatio", hitRatio);
+            
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Error getting cache statistics: " + e.getMessage());
+            
+            // Return a simple response with error information
+            Map<String, Object> errorStats = new HashMap<>();
+            errorStats.put("error", "Failed to retrieve cache statistics");
+            errorStats.put("reason", e.getMessage());
+            errorStats.put("weatherApiRequests", 0);
+            errorStats.put("weatherApiHits", 0);
+            errorStats.put("weatherApiMisses", 0);
+            errorStats.put("weatherApiHitRatio", 0);
+            
+            return ResponseEntity.ok(errorStats);
+        }
     }
 
     /**

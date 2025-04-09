@@ -1,6 +1,8 @@
 package tqs.hm1114588.config;
 
-import org.springframework.cache.annotation.EnableCaching;
+import java.time.Duration;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -11,14 +13,14 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Duration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
+/**
+ * Redis configuration to handle proper serialization
+ */
 @Configuration
-@EnableCaching
+@ConditionalOnProperty(name = "spring.data.redis.enabled", havingValue = "true", matchIfMissing = true)
 public class RedisConfig {
 
     @Bean
@@ -43,24 +45,29 @@ public class RedisConfig {
                 .build();
     }
 
+    /**
+     * Configure the RedisTemplate with proper serializers to avoid serialization issues
+     */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         
-        // Create ObjectMapper with JavaTimeModule
+        // Configure object mapper with modules for date/time serialization
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         
-        // Create serializer with the configured ObjectMapper
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        serializer.setObjectMapper(objectMapper);
+        // Use JSON serializer for values
+        GenericJackson2JsonRedisSerializer jackson2JsonRedisSerializer = 
+                new GenericJackson2JsonRedisSerializer(objectMapper);
         
-        // Set serializers
+        // Use String serializer for keys
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(serializer);
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        
+        // Also set serializers for hash operations
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
         
         template.afterPropertiesSet();
         return template;
