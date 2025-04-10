@@ -7,8 +7,11 @@ import ProfilePage from './pages/ProfilePage';
 import ReservationsPage from './pages/ReservationsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import CheckInPage from './pages/CheckInPage';
+import ManageRestaurantPage from './pages/ManageRestaurantPage';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
+import StaffRoute from './components/StaffRoute';
 
 function App() {
   return (
@@ -41,6 +44,22 @@ function App() {
                 <PrivateRoute>
                   <ReservationsPage />  
                 </PrivateRoute>
+              }
+            />
+            <Route 
+              path="/checkin"
+              element={
+                <StaffRoute>
+                  <CheckInPage />  
+                </StaffRoute>
+              }
+            />
+            <Route 
+              path="/manage/:id"
+              element={
+                <StaffRoute>
+                  <ManageRestaurantPage />  
+                </StaffRoute>
               }
             />
           </Routes>

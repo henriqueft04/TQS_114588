@@ -59,6 +59,28 @@ public class MenuController {
     }
 
     /**
+     * Get menus by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of menus
+     */
+    @GetMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<List<Menu>> getMenusByRestaurant(@PathVariable Long restaurantId) {
+        List<Menu> menus = menuService.findByRestaurant(restaurantId);
+        return ResponseEntity.ok(menus);
+    }
+
+    /**
+     * Get available menus by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of available menus
+     */
+    @GetMapping("/restaurant/{restaurantId}/available")
+    public ResponseEntity<List<Menu>> getAvailableMenusByRestaurant(@PathVariable Long restaurantId) {
+        List<Menu> menus = menuService.findAvailableByRestaurant(restaurantId);
+        return ResponseEntity.ok(menus);
+    }
+
+    /**
      * Create a new menu
      * @param requestBody Request containing meal ID and menu information
      * @return Created menu

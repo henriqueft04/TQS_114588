@@ -19,6 +19,7 @@ import tqs.hm1114588.model.restaurant.ReservationStatus;
 import tqs.hm1114588.model.restaurant.Restaurant;
 import tqs.hm1114588.repository.ReservationRepository;
 import tqs.hm1114588.repository.RestaurantRepository;
+import tqs.hm1114588.repository.UserRepository;
 
 @Service
 public class ReservationService {
@@ -33,6 +34,9 @@ public class ReservationService {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Find all reservations
@@ -85,6 +89,16 @@ public class ReservationService {
     }
 
     /**
+     * Find reservations by user ID
+     * @param userId User ID
+     * @return List of reservations
+     */
+    @Cacheable(value = "reservationsByUser", key = "#userId")
+    public List<Reservation> findByUserId(Long userId) {
+        return reservationRepository.findByUserId(userId);
+    }
+
+    /**
      * Save reservation
      * @param reservation Reservation to save
      * @return Saved reservation
@@ -108,11 +122,12 @@ public class ReservationService {
      * @param specialRequests Special requests
      * @param isGroupReservation Is group reservation
      * @param menusRequired Menus required
+     * @param userId User ID
      * @return Created reservation
      */
     @Transactional
     @CachePut(value = "reservation", key = "#result.id")
-    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange"}, allEntries = true)
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationsByUser"}, allEntries = true)
     public Reservation createReservation(
             Long restaurantId,
             String customerName,
@@ -123,7 +138,8 @@ public class ReservationService {
             String mealType,
             String specialRequests,
             Boolean isGroupReservation,
-            Integer menusRequired) {
+            Integer menusRequired,
+            Long userId) {
         
         Restaurant restaurant = restaurantService.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
@@ -151,6 +167,14 @@ public class ReservationService {
         reservation.setMenusRequired(menusRequired);
         reservation.setToken(UUID.randomUUID().toString());
         reservation.setStatus(ReservationStatus.PENDING);
+        
+        // Set user if provided
+        if (userId != null) {
+            userRepository.findById(userId).ifPresent(user -> {
+                reservation.setUser(user);
+                logger.info("Associated reservation with user ID: {}", userId);
+            });
+        }
         
         logger.info("Created reservation: {}", reservation);
         

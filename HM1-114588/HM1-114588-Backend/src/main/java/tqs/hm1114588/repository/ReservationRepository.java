@@ -48,4 +48,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             LocalDateTime startTime, 
             LocalDateTime endTime, 
             List<ReservationStatus> statuses);
+            
+    /**
+     * Find reservations by user ID
+     * @param userId User ID
+     * @return List of reservations
+     */
+    List<Reservation> findByUserId(Long userId);
 } 

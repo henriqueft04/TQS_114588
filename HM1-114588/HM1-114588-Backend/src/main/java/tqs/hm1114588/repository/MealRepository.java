@@ -11,4 +11,11 @@ import tqs.hm1114588.model.restaurant.Meal;
 public interface MealRepository extends JpaRepository<Meal, Long> {
 
     List<Meal> findByScheduleId(Long scheduleId);
+    
+    /**
+     * Find meals by restaurant ID
+     * @param restaurantId Restaurant ID
+     * @return List of meals
+     */
+    List<Meal> findByRestaurantId(Long restaurantId);
 } 

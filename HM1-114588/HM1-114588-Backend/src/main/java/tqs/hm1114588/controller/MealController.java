@@ -42,6 +42,12 @@ public class MealController {
         return ResponseEntity.ok(meals);
     }
 
+    @GetMapping("/restaurant/{restaurantId}")
+    public ResponseEntity<List<Meal>> getMealsByRestaurant(@PathVariable Long restaurantId) {
+        List<Meal> meals = mealService.findByRestaurant(restaurantId);
+        return ResponseEntity.ok(meals);
+    }
+
     @PostMapping
     public ResponseEntity<Meal> createMeal(@RequestBody Meal meal) {
         Meal savedMeal = mealService.save(meal);

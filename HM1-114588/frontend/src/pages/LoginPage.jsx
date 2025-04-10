@@ -7,7 +7,7 @@ const LoginPage = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('CUSTOMER');
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -68,8 +68,8 @@ const LoginPage = () => {
               className="select select-bordered w-full"
               required
             >
-              <option value="user">User</option>
-              <option value="staff">Staff</option>
+              <option value="CUSTOMER">User</option>
+              <option value="STAFF">Staff</option>
             </select>
           </div>
           

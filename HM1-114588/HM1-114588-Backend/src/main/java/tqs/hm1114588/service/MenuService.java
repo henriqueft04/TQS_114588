@@ -54,6 +54,26 @@ public class MenuService {
     }
 
     /**
+     * Find menus by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of menus for the specified restaurant
+     */
+    @Cacheable(value = "menusByRestaurant", key = "#restaurantId")
+    public List<Menu> findByRestaurant(Long restaurantId) {
+        return menuRepository.findByRestaurantId(restaurantId);
+    }
+
+    /**
+     * Find available menus by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of available menus for the specified restaurant
+     */
+    @Cacheable(value = "availableMenusByRestaurant", key = "#restaurantId")
+    public List<Menu> findAvailableByRestaurant(Long restaurantId) {
+        return menuRepository.findByRestaurantIdAndIsAvailableTrue(restaurantId);
+    }
+
+    /**
      * Save menu
      * @param menu Menu to save
      * @return Saved menu

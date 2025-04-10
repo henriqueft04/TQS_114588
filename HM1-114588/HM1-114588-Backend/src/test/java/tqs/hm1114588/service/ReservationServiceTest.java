@@ -150,7 +150,7 @@ class ReservationServiceTest {
         Reservation result = reservationService.createReservation(
                 1L, "John Doe", "john@example.com", "1234567890",
                 4, reservationTime, "Dinner", "Special requests",
-                false, 4);
+                false, 4, null);
 
         // Assert
         assertNotNull(result);
@@ -176,7 +176,7 @@ class ReservationServiceTest {
             reservationService.createReservation(
                     99L, "John Doe", "john@example.com", "1234567890",
                     4, reservationTime, "Dinner", "Special requests",
-                    false, 4);
+                    false, 4, null);
         });
 
         assertEquals("Restaurant not found", exception.getMessage());

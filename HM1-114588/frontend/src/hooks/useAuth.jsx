@@ -18,14 +18,38 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isStaff, setIsStaff] = useState(false);
+
+  // Update user role state when user changes
+  const updateUserRole = (userData) => {
+    if (!userData) {
+      setIsStaff(false);
+      return null;
+    }
+    
+    // Ensure we normalize the role for consistent comparison
+    const role = userData.role ? userData.role.toUpperCase() : '';
+    userData.normalizedRole = role;
+    
+    // Set staff flag
+    setIsStaff(role === 'STAFF');
+    
+    return userData;
+  };
 
   const login = async (email, password, role) => {
     try {
+      setError(null);
       const response = await AuthApi.login(email, password, role);
-      setUser(response.data.user);
-      return response.data.user;
+      const userData = response.data.user || response.data; // Handle both formats
+      const processedUser = updateUserRole(userData);
+      setUser(processedUser);
+      return processedUser;
     } catch (error) {
-      console.error('Failed to log in:', error);
+      const errorMessage = error.response?.data || 'Failed to log in';
+      console.error('Failed to log in:', errorMessage);
+      setError(errorMessage);
       return null;
     }
   };
@@ -34,6 +58,8 @@ function useProvideAuth() {
     try {
       await AuthApi.logout();
       setUser(null);
+      setIsStaff(false);
+      // Clear any local state that should be reset on logout
     } catch (error) {
       console.error('Failed to log out:', error);
     }
@@ -41,27 +67,44 @@ function useProvideAuth() {
   
   const register = async (userData) => {
     try {
+      setError(null);
       const response = await AuthApi.register(userData);
-      setUser(response.data.user);
-      return response.data.user;
+      const responseData = response.data.user || response.data; // Handle both formats
+      const processedUser = updateUserRole(responseData);
+      setUser(processedUser);
+      return processedUser;
     } catch (error) {
-      console.error('Failed to register:', error);
+      const errorMessage = error.response?.data || 'Failed to register';
+      console.error('Failed to register:', errorMessage);
+      setError(errorMessage);
       return null;
     }
   };
 
-  // Subscribe to user on mount
-  // Because this sets state in the callback it will cause any
-  // component that utilizes this hook to re-render with the
-  // latest auth object.
+  // Check if the user is already authenticated when the component mounts
   useEffect(() => {
     const getUser = async () => {
+      // Don't even try to fetch user data if no token exists
+      if (!AuthApi.isAuthenticated()) {
+        setUser(null);
+        setIsStaff(false);
+        setLoading(false);
+        return;
+      }
+      
       setLoading(true);
       try {
         const response = await AuthApi.getUser();
-        setUser(response.data);
+        const userData = updateUserRole(response.data);
+        setUser(userData);
       } catch (error) {
+        console.error('Error fetching user:', error);
         setUser(null);
+        setIsStaff(false);
+        // If there was an authentication error, clear the token
+        if (error.response?.status === 401) {
+          localStorage.removeItem('authToken');
+        }
       } finally {
         setLoading(false);
       }
@@ -76,6 +119,9 @@ function useProvideAuth() {
     login,
     logout,
     register,
-    loading
+    loading,
+    error,
+    isAuthenticated: !!user,
+    isStaff
   };
 } 

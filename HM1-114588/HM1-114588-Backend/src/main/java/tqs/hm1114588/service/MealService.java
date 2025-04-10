@@ -55,6 +55,16 @@ public class MealService {
     }
 
     /**
+     * Find meals by restaurant
+     * @param restaurantId Restaurant ID
+     * @return List of meals for the specified restaurant
+     */
+    @Cacheable(value = "mealsByRestaurant", key = "#restaurantId")
+    public List<Meal> findByRestaurant(Long restaurantId) {
+        return mealRepository.findByRestaurantId(restaurantId);
+    }
+
+    /**
      * Save meal
      * @param meal Meal to save
      * @return Saved meal

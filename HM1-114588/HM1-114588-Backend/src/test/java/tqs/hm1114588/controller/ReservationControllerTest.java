@@ -194,7 +194,8 @@ class ReservationControllerTest {
                 eq("Dinner"),
                 eq(null),
                 eq(false),
-                eq(4)
+                eq(4),
+                eq(null)
         )).thenReturn(reservation);
 
         // Act & Assert
@@ -215,7 +216,8 @@ class ReservationControllerTest {
                 eq("Dinner"),
                 any(),
                 eq(false),
-                eq(4)
+                eq(4),
+                any()
         );
     }
 

@@ -72,6 +72,16 @@ public class ReservationController {
     }
 
     /**
+     * Get reservations by user ID
+     * @param userId User ID
+     * @return List of reservations
+     */
+    @GetMapping("/user/{userId}")
+    public List<Reservation> getReservationsByUser(@PathVariable Long userId) {
+        return reservationService.findByUserId(userId);
+    }
+
+    /**
      * Get reservations by date range
      * @param startDate Start date
      * @param endDate End date
@@ -92,6 +102,11 @@ public class ReservationController {
     @PostMapping(produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @org.springframework.web.bind.annotation.ResponseBody
     public Reservation createReservation(@RequestBody Reservation reservation) {
+        Long userId = null;
+        if (reservation.getUser() != null && reservation.getUser().getId() != null) {
+            userId = reservation.getUser().getId();
+        }
+        
         return reservationService.createReservation(
                 reservation.getRestaurant().getId(),
                 reservation.getCustomerName(),
@@ -102,7 +117,8 @@ public class ReservationController {
                 reservation.getMealType(),
                 reservation.getSpecialRequests(),
                 reservation.getIsGroupReservation(),
-                reservation.getMenusRequired()
+                reservation.getMenusRequired(),
+                userId
         );
     }
 

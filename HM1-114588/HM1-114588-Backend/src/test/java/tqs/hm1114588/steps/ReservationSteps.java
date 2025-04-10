@@ -84,7 +84,8 @@ public class ReservationSteps {
                 details.get("Meal Type"),
                 null,
                 false,
-                Integer.parseInt(details.get("Party Size"))
+                Integer.parseInt(details.get("Party Size")),
+                null
             );
             token = reservation.getToken();
         } catch (Exception e) {
@@ -132,7 +133,8 @@ public class ReservationSteps {
             "Dinner",
             null,
             false,
-            4
+            4,
+            null
         );
         reservation.setToken(token);
         reservationService.save(reservation);
@@ -185,7 +187,8 @@ public class ReservationSteps {
             "Dinner",
             null,
             seats >= 8,
-            seats
+            seats,
+            null
         );
         
         assertNotNull(reservation);
@@ -210,7 +213,8 @@ public class ReservationSteps {
             "Dinner",
             null,
             false,
-            4
+            4,
+            null
         );
         
         // Set the token and update the status to confirmed

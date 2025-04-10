@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 
 export default function Navbar() {
-    const { user, logout } = useAuth();
+    const { user, logout, isStaff } = useAuth();
 
     // Get initial to display in avatar
     const getInitial = () => {
@@ -11,9 +11,41 @@ export default function Navbar() {
         if (user?.email) return user.email.charAt(0);
         return 'U'; // Default fallback
     };
+    
+    // Render staff-specific links
+    const renderStaffLinks = () => {
+        return (
+            <>
+                <Link to="/checkin" className="text-primary">
+                    <i className="fas fa-clipboard-check text-xl"></i>
+                    <span className="btm-nav-label">Check In</span>
+                </Link>
+                <Link to="/restaurants/manage" className="text-primary">
+                    <i className="fas fa-edit text-xl"></i>
+                    <span className="btm-nav-label">Manage</span>
+                </Link>
+            </>
+        );
+    };
+
+    // Render user-specific links
+    const renderUserLinks = () => {
+        return (
+            <>
+                <Link to="/profile" className="text-primary">
+                    <i className="fas fa-user text-xl"></i>
+                    <span className="btm-nav-label">Profile</span>
+                </Link>
+                <Link to="/reservations" className="text-primary">
+                    <i className="fas fa-calendar-alt text-xl"></i>
+                    <span className="btm-nav-label">Reservations</span>
+                </Link>
+            </>
+        );
+    };
 
     return (
-        <div className="btm-nav bg-base-200 flex flex-row justify-evenly items-center w-full">
+        <div className="dock bg-base-200 flex flex-row justify-evenly items-center w-full">
             <Link to="/" className="text-primary ">
                 <i className="fas fa-utensils text-xl"></i>
                 <span className="btm-nav-label">Restaurants</span>
@@ -21,24 +53,13 @@ export default function Navbar() {
             
             {user ? (
                 <>
-                    <Link to="/profile" className="text-primary">
-                        <div className="avatar placeholder">
-                            <div className="bg-neutral-focus text-neutral-content rounded-full w-8">
-                                <span>{getInitial()}</span>
-                            </div>
-                        </div>
-                        <span className="btm-nav-label">Profile</span>
-                    </Link>
-                    
-                    <Link to="/reservations" className="text-primary">
-                        <i className="fas fa-calendar-alt text-xl"></i>
-                        <span className="btm-nav-label">Reservations</span>
-                    </Link>
+                    {isStaff ? renderStaffLinks() : renderUserLinks()}
                     
                     <button onClick={logout} className="text-primary">
                         <i className="fas fa-sign-out-alt text-xl"></i>
                         <span className="btm-nav-label">Logout</span>
                     </button>
+                    
                 </>
             ) : (
                 <>
