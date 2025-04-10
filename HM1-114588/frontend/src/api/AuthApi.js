@@ -21,23 +21,17 @@ authAxios.interceptors.request.use(config => {
 const AuthApi = {
   login: async (email, password, role) => {
     const response = await axios.post(`${BASE_URL}/auth/login`, { email, password, role });
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
     return response;
   },
 
   logout: async () => {
     const response = await authAxios.post(`${BASE_URL}/auth/logout`);
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
     return response;
   },
   
   register: async (userData) => {
     const response = await axios.post(`${BASE_URL}/auth/register`, userData);
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
     return response;
   },
   
@@ -47,7 +41,7 @@ const AuthApi = {
   
   // Check if user is authenticated
   isAuthenticated: () => {
-    return localStorage.getItem('authToken') !== null;
+    return localStorage.getItem('userData') !== null;
   }
 };
 

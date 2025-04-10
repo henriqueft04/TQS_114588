@@ -24,6 +24,7 @@ function useProvideAuth() {
   // Update user role state when user changes
   const updateUserRole = (userData) => {
     if (!userData) {
+      console.log('updateUserRole called with no userData, setting isStaff to false');
       setIsStaff(false);
       return null;
     }
@@ -31,9 +32,13 @@ function useProvideAuth() {
     // Ensure we normalize the role for consistent comparison
     const role = userData.role ? userData.role.toUpperCase() : '';
     userData.normalizedRole = role;
+    console.log('updateUserRole processing user with role:', userData.role);
+    console.log('Normalized role to:', role);
     
     // Set staff flag
-    setIsStaff(role === 'STAFF');
+    const staffFlag = role === 'STAFF';
+    console.log('Setting isStaff flag to:', staffFlag);
+    setIsStaff(staffFlag);
     
     return userData;
   };
@@ -44,6 +49,10 @@ function useProvideAuth() {
       const response = await AuthApi.login(email, password, role);
       const userData = response.data.user || response.data; // Handle both formats
       const processedUser = updateUserRole(userData);
+      
+      // Store user data in localStorage for persistence
+      localStorage.setItem('userData', JSON.stringify(processedUser));
+      
       setUser(processedUser);
       return processedUser;
     } catch (error) {
@@ -59,6 +68,10 @@ function useProvideAuth() {
       await AuthApi.logout();
       setUser(null);
       setIsStaff(false);
+      
+      // Clear user data from localStorage
+      localStorage.removeItem('userData');
+      
       // Clear any local state that should be reset on logout
     } catch (error) {
       console.error('Failed to log out:', error);
@@ -84,7 +97,24 @@ function useProvideAuth() {
   // Check if the user is already authenticated when the component mounts
   useEffect(() => {
     const getUser = async () => {
-      // Don't even try to fetch user data if no token exists
+      // Try to get user data from localStorage first
+      const storedUserData = localStorage.getItem('userData');
+      
+      if (storedUserData) {
+        try {
+          const userData = JSON.parse(storedUserData);
+          const processedUser = updateUserRole(userData);
+          setUser(processedUser);
+          setLoading(false);
+          return;
+        } catch (error) {
+          console.error('Error parsing stored user data:', error);
+          // Clear invalid data
+          localStorage.removeItem('userData');
+        }
+      }
+      
+      // If no local data or parsing failed, check with the server if we can
       if (!AuthApi.isAuthenticated()) {
         setUser(null);
         setIsStaff(false);
@@ -97,6 +127,8 @@ function useProvideAuth() {
         const response = await AuthApi.getUser();
         const userData = updateUserRole(response.data);
         setUser(userData);
+        // Update localStorage with fresh data
+        localStorage.setItem('userData', JSON.stringify(userData));
       } catch (error) {
         console.error('Error fetching user:', error);
         setUser(null);
@@ -104,6 +136,7 @@ function useProvideAuth() {
         // If there was an authentication error, clear the token
         if (error.response?.status === 401) {
           localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
         }
       } finally {
         setLoading(false);

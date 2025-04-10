@@ -190,11 +190,9 @@ public class ReservationController {
      */
     @PutMapping("/check-in/{token}")
     public ResponseEntity<Reservation> checkInReservationByToken(@PathVariable String token) {
-        // Extract ID from token format "test-token-123"
         try {
-            String[] parts = token.split("-");
-            Long id = Long.parseLong(parts[parts.length - 1]);
-            return reservationService.checkInReservation(id)
+            // Direct lookup using the token value
+            return reservationService.checkInReservationByToken(token)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {

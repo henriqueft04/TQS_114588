@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import RestaurantApi from '../api/RestaurantApi';
 
 export default function CheckInPage() {
-  const { user, isStaff } = useAuth();
+  const { user, isStaff, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [token, setToken] = useState('');
   const [reservation, setReservation] = useState(null);
@@ -12,7 +12,23 @@ export default function CheckInPage() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    if (!authLoading && !user) {
+      console.log("User not authenticated, redirecting to login");
+      navigate('/login', { state: { from: '/checkin' } });
+    }
+  }, [user, authLoading, navigate]);
+
   // Redirect non-staff users
+  if (authLoading) {
+    return <div className="container mx-auto p-4">Loading...</div>;
+  }
+
+  if (!user) {
+    return null; // Will be redirected by the useEffect
+  }
+
   if (!isStaff) {
     return (
       <div className="container mx-auto p-4">
@@ -41,6 +57,14 @@ export default function CheckInPage() {
       setReservation(response.data);
     } catch (err) {
       console.error('Error fetching reservation:', err);
+      
+      // Check if it's an auth error
+      if (err.response && err.response.status === 401) {
+        console.error('Authentication error. Redirecting to login.');
+        navigate('/login', { state: { from: '/checkin' } });
+        return;
+      }
+      
       setError('No reservation found with this token');
     } finally {
       setLoading(false);
@@ -53,6 +77,7 @@ export default function CheckInPage() {
     setSuccess(null);
     
     try {
+      console.log('Sending check-in request for token:', token);
       await RestaurantApi.checkInReservation(token);
       setSuccess('Reservation has been successfully checked in!');
       
@@ -61,7 +86,22 @@ export default function CheckInPage() {
       setReservation(response.data);
     } catch (err) {
       console.error('Error checking in reservation:', err);
-      setError('Failed to check in. This reservation may already be checked in or canceled.');
+      
+      // Check if it's an auth error
+      if (err.response && err.response.status === 401) {
+        console.error('Authentication error. Redirecting to login.');
+        navigate('/login', { state: { from: '/checkin' } });
+        return;
+      }
+      
+      // Provide specific error message based on the status code
+      if (err.response && err.response.status === 404) {
+        setError('Reservation not found with this token. Please verify the token is correct.');
+      } else if (err.response && err.response.status === 400) {
+        setError('Bad request. This reservation cannot be checked in (may already be checked in or canceled).');
+      } else {
+        setError('Failed to check in. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
@@ -186,7 +226,7 @@ export default function CheckInPage() {
             </div>
             
             <div className="card-actions justify-end mt-6">
-              {reservation.status === 'CONFIRMED' && (
+              {(reservation.status === 'CONFIRMED' || reservation.status === 'PENDING') && (
                 <button 
                   className="btn btn-success" 
                   onClick={handleCheckIn}

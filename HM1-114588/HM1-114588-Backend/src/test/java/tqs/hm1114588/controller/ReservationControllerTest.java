@@ -281,14 +281,14 @@ class ReservationControllerTest {
     void testCheckInReservation() throws Exception {
         // Arrange
         reservation.setStatus(ReservationStatus.CHECKED_IN);
-        when(reservationService.checkInReservation(123L)).thenReturn(Optional.of(reservation));
+        when(reservationService.checkInReservationByToken("test-token-123")).thenReturn(Optional.of(reservation));
 
         // Act & Assert
         mockMvc.perform(put("/api/reservations/check-in/test-token-123"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("CHECKED_IN")));
 
-        verify(reservationService).checkInReservation(123L);
+        verify(reservationService).checkInReservationByToken("test-token-123");
     }
 
     @Test

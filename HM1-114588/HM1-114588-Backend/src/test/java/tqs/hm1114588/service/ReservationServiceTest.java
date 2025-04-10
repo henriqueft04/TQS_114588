@@ -253,15 +253,18 @@ class ReservationServiceTest {
     void testCheckInReservation_WhenNotConfirmed() {
         // Arrange - reservation is already in PENDING status from setUp
         when(reservationRepository.findByToken("test-token-123")).thenReturn(Optional.of(reservation));
+        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
 
         // Act
         Optional<Reservation> result = reservationService.checkInReservation(123L);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals(ReservationStatus.PENDING, result.get().getStatus()); // Status should not change
+        // Since our service now automatically confirms and then checks in PENDING reservations,
+        // the final status should be CHECKED_IN
+        assertEquals(ReservationStatus.CHECKED_IN, result.get().getStatus());
         verify(reservationRepository).findByToken("test-token-123");
-        verify(reservationRepository, never()).save(reservation);
+        verify(reservationRepository).save(reservation);
     }
 
     @Test

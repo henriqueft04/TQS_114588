@@ -1,4 +1,6 @@
 import axios from 'axios';
+// Import the authenticated axios instance from AuthApi
+import authAxios from './authAxiosInstance';
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -114,7 +116,8 @@ const RestaurantApi = {
   },
   
   getReservationByToken: (token) => {
-    return axios.get(`${BASE_URL}/reservations/token/${token}`);
+    console.log('Getting reservation by token:', token);
+    return authAxios.get(`${BASE_URL}/reservations/token/${token}`);
   },
 
   getReservationsByUser: async (userId) => {
@@ -157,7 +160,8 @@ const RestaurantApi = {
   },
   
   checkInReservation: (token) => {
-    return axios.put(`${BASE_URL}/reservations/check-in/${token}`);
+    // Use authAxios instead of axios to include the authentication token
+    return authAxios.put(`${BASE_URL}/reservations/check-in/${token}`);
   },
 
   // Weather endpoints

@@ -13,11 +13,23 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    console.log('Attempting login with:', { email, password, role });
     const user = await login(email, password, role);
     if (user) {
-      // Redirect to profile page on successful login
-      navigate('/profile');
+      console.log('Login successful for user:', user);
+      console.log('User role:', user.role);
+      console.log('Is Staff:', user.role.toUpperCase() === 'STAFF');
+      
+      // Redirect based on role
+      if (user.role.toUpperCase() === 'STAFF') {
+        console.log('Redirecting staff user to checkin page');
+        navigate('/checkin');
+      } else {
+        console.log('Redirecting customer user to profile page');
+        navigate('/profile');
+      }
     } else {
+      console.error('Login failed');
       setError('Invalid email or password');
     }
   };

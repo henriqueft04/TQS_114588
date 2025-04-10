@@ -242,7 +242,40 @@ public class ReservationService {
         String token = "test-token-" + id;
         return reservationRepository.findByToken(token)
                 .map(reservation -> {
-                    // Only update status if it's in CONFIRMED state, otherwise return as is
+                    // Automatically confirm the reservation if it's not already confirmed
+                    if (reservation.getStatus() == ReservationStatus.PENDING) {
+                        reservation.setStatus(ReservationStatus.CONFIRMED);
+                        logger.info("Automatically confirmed reservation during check-in: {}", reservation);
+                    }
+                    
+                    // Now check in the reservation if it's confirmed
+                    if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+                        reservation.setStatus(ReservationStatus.CHECKED_IN);
+                        logger.info("Checked in reservation: {}", reservation);
+                        return reservationRepository.save(reservation);
+                    }
+                    return reservation;
+                });
+    }
+
+    /**
+     * Check-in a reservation by token
+     * @param token Reservation token
+     * @return Updated reservation if found
+     */
+    @Transactional
+    @CacheEvict(value = {"reservations", "reservationsByRestaurant", "reservationsByDateRange", "reservationByToken"}, allEntries = true)
+    public Optional<Reservation> checkInReservationByToken(String token) {
+        logger.info("Checking in reservation with token: {}", token);
+        return reservationRepository.findByToken(token)
+                .map(reservation -> {
+                    // Automatically confirm the reservation if it's not already confirmed
+                    if (reservation.getStatus() == ReservationStatus.PENDING) {
+                        reservation.setStatus(ReservationStatus.CONFIRMED);
+                        logger.info("Automatically confirmed reservation during check-in: {}", reservation);
+                    }
+                    
+                    // Now check in the reservation if it's confirmed
                     if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
                         reservation.setStatus(ReservationStatus.CHECKED_IN);
                         logger.info("Checked in reservation: {}", reservation);
