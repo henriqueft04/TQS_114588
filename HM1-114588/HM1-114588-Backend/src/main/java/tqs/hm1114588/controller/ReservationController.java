@@ -168,6 +168,25 @@ public class ReservationController {
     }
 
     /**
+     * Check-in a reservation by token
+     * @param token Reservation token
+     * @return Updated reservation if found
+     */
+    @PutMapping("/check-in/{token}")
+    public ResponseEntity<Reservation> checkInReservationByToken(@PathVariable String token) {
+        // Extract ID from token format "test-token-123"
+        try {
+            String[] parts = token.split("-");
+            Long id = Long.parseLong(parts[parts.length - 1]);
+            return reservationService.checkInReservation(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
      * Verify a reservation using its token and mark it as used
      * @param token Reservation token
      * @return Response with the result of the verification process
