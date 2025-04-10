@@ -5,7 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5949ed2-fa4f-4d9a-abcd-0740e64a44b0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/lab7.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TQS25 Lab07 Non-functional testing.pdf" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lab7_1_k6Tool/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lab7_1_k6Tool/k6-oss-workshop" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lab7_1_k6Tool/readme.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/img.png" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop/README.md" afterDir="false" />
@@ -34,21 +41,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "henriqueft04"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;henriqueft04&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:henriqueft04/TQS_114588.git",
-    "accountId": "80a409b1-efec-408f-8cd3-fd27def5eab7"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:henriqueft04/TQS_114588.git&quot;,
+    &quot;accountId&quot;: &quot;80a409b1-efec-408f-8cd3-fd27def5eab7&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2uuM6m7hOdIjMwcH8iLY7qC6W3j" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -57,21 +64,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/ric/Desktop/TQS_114588/lab7/lab7_2_ResultsMonitoring/k6-oss-workshop",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ric/Desktop/TQS_114588/lab7/lab7_2_ResultsMonitoring/k6-oss-workshop&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/lab7_2_ResultsMonitoring/k6-oss-workshop" />
@@ -98,6 +105,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743093832477</updated>
       <workItem from="1743093833594" duration="5418000" />
+      <workItem from="1743102026874" duration="8000" />
     </task>
     <servers />
   </component>

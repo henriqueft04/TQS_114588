@@ -48,7 +48,6 @@ class CarsServiceITApplicationIT {
                 .build()
                 .toUriString();
 
-        // Now, you can make a GET request and assert the response here.
-        // (You can use TestRestTemplate to perform a GET request if desired)
+
     }
 }
