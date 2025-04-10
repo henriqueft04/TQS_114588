@@ -191,7 +191,11 @@ export default function ReservationsPage() {
                             <p className="text-sm">
                               Status: <span className="badge badge-warning">PENDING</span>
                             </p>
+                            <p className="text-sm">
+                              Token: <span className="font-mono bg-base-200 p-1 rounded">{reservation.token}</span>
+                            </p>
                           </div>
+
                           <div>
                             <button
                               onClick={() => handleCancelReservation(reservation.id)}
